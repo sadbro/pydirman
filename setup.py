@@ -24,5 +24,6 @@ if 'pydirman' in os.listdir('/bin/'):
 else:
     os.system('cp {}/{} /bin/'.format(PATH, 'pydirman'))
    
+os.system('cp {}/pydirman.py /etc/'.format(PATH))
 os.chdir('/bin/')
 fixer('pydirman')
