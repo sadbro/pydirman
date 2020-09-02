@@ -80,7 +80,7 @@ def __chdir(CUR_DIR):
                         __chdir(LS_DIR[ask])
 
                     elif os.path.isfile(str(LS_DIR[ask])):
-                        porr = str(input(colored("THIS IS A FILE! [p]rint/[r]emain/[e]dit:", "white", attrs=['underline']) +" "))
+                        porr = str(input(colored("FILE=[{}]\n".format(str(LS_DIR[ask])), "white")+"[p]rint/[c]ancel/[e]dit: "))
                         CUR_FILE = str(LS_DIR[ask])
 
                         if porr.lower() == "p":
@@ -97,8 +97,7 @@ def __chdir(CUR_DIR):
                                 print(colored("See you soon!", "white"))
                                 sys.exit(0)
 
-                        elif porr.lower() == "r":
-                            __display()
+                        elif porr.lower() == "c":
                             __chdir(os.getcwd())
                         
                         elif porr.lower() == "e":
@@ -165,8 +164,12 @@ def __chdir(CUR_DIR):
         __chdir(os.getcwd())
         
     elif com.lower() == "n":
-        filename = str(input("Enter file name [create]: "))
-        os.system("sudo gedit {}".format(filename))
+        try:
+            filename = str(input("Enter file name [create]: "))
+            os.system("sudo gedit {} >/dev/null 2>&1".format(filename))
+        except KeyboardInterrupt:
+            print("File not created")
+            
         __chdir(os.getcwd())
         
     elif com.lower() == "d":
@@ -181,8 +184,12 @@ def __chdir(CUR_DIR):
                 #print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
                 #counter += 1
         print("=====================================================================")
-        delfile = str(input("Enter file name [delete]: "))
-        os.system("sudo rm {}".format(delfile))
+        try:
+            delfile = str(input("Enter file name [delete]: "))
+            os.system("sudo rm {}".format(delfile))
+        except KeyboardInterrupt:
+            print("File not deleted")
+            
         __chdir(os.getcwd())
         
     elif com.lower() == "m":
