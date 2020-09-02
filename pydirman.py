@@ -96,12 +96,20 @@ def __chdir(CUR_DIR):
                             elif stat.lower() == "e":
                                 print(colored("See you soon!", "white"))
                                 sys.exit(0)
+                                
+                            else:
+                                print("Enter a valid command!")
+                                __chdir(os.getcwd())
 
                         elif porr.lower() == "c":
                             __chdir(os.getcwd())
                         
                         elif porr.lower() == "e":
                             os.system("sudo gedit {} >/dev/null 2>&1".format(CUR_FILE))
+                            __chdir(os.getcwd())
+                            
+                        else:
+                            print("Enter a valid command")
                             __chdir(os.getcwd())
                 
                 except IndexError:
