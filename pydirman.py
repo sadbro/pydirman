@@ -5,7 +5,11 @@ import sys
 from time import sleep
 from termcolor import colored, cprint
 
-global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR
+global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR
+
+SYS_DIR = []
+for directory in os.listdir("/"):
+    SYS_DIR.append(directory)
 
 if len(sys.argv) > 1:
     if sys.argv[1] == "--help" or sys.argv[1] == "-h":
@@ -51,8 +55,9 @@ def __display():
     print("YOUR CURRENT LOCATION: "+ colored("{}".format(CUR_PATH), "red", attrs=['bold']))
     print("=====================================================================")
     print("[walker]  = "+ colored("[c]", 'red') +"hoose-" +colored("[p]", 'red') +"revious-"+ colored("[s]", 'red') +"earch")
-    print("[utility] = "+ colored("[m]", 'red') +"odern-"+ colored("[t]", 'red') +"erminal-" +colored("[e]", 'red') +"xit")
+    print("[utility] = "+ colored("[u]", 'red') +"pdate-"+ colored("[t]", 'red') +"erminal-" +colored("[e]", 'red') +"xit")
     print("[writer]  = "+ colored("[n]", 'red') +"ewfile-" +colored("[d]", 'red') +"eletefile")
+    print("[folder]  = "+ colored("[m]", 'red') +"akedir-" +colored("[r]", 'red') +"emovedir")
 
 
 def __chdir(CUR_DIR):
@@ -63,7 +68,7 @@ def __chdir(CUR_DIR):
     for item in LS_DIR:
         SEARCH_DIR.append(str(item.lower()))
         
-    __all__ = ['choose', 'exit', 'previous', 'search', 'terminal', 'newfile', 'deletefile', 'modern']
+    __all__ = ['choose', 'exit', 'previous', 'search', 'terminal', 'newfile', 'deletefile', 'update', 'makedir', 'removedir']
 
     com = str(input(colored("\npydirman", "blue", attrs=['underline']) +colored(">", "blue"))).strip()
     if com.lower() == "c":
@@ -142,7 +147,7 @@ def __chdir(CUR_DIR):
             __chdir(CUR_DIR)
 
     elif com.lower() == "s":
-        search = str(input("\nEnter your search: "))
+        search = str(input("\nEnter your search: ")).strip()
         #cacheDir = []
         #for obj in LS_DIR:
         #    if search in obj:
@@ -200,7 +205,7 @@ def __chdir(CUR_DIR):
             
         __chdir(os.getcwd())
         
-    elif com.lower() == "m":
+    elif com.lower() == "u":
         print("=====================================================================")
         counter = 0
         for index,FI_FO in enumerate(sorted(os.listdir(os.getcwd()))):
@@ -211,6 +216,37 @@ def __chdir(CUR_DIR):
                 print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
                 counter += 1
         print("=====================================================================")
+        __chdir(os.getcwd())
+    
+    elif com.lower() == "m":
+        try:
+            dirname_mk = str(input("Enter Directory name: "))
+            os.system("mkdir {}".format(dirname_mk))
+        except KeyboardInterrupt:
+            print("Directory not created!")
+            
+        __chdir(os.getcwd)
+
+    elif com.lower() == "r":
+        print("=====================================================================")
+        counter = 0
+        for index,FI_FO in enumerate(LS_DIR):
+            #if os.path.isfile(FI_FO):
+                #print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
+                #counter += 1
+            
+            if os.path.isdir(FI_FO):
+                print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
+                counter += 1
+        print("=====================================================================")
+        try:
+            dirname_rm = str(input("Enter directory name: ")).strip()
+            if dirname_rm in SYS_DIR:
+                print("You just tried to delete a system file!!")
+            os.system("rmdir {}".format(dirname_rm))
+        except KeyboardInterrupt:
+            print("Directory not deleted")
+            
         __chdir(os.getcwd())
         
     elif com.lower() in __all__:
