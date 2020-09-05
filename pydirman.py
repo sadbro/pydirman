@@ -64,10 +64,16 @@ def __chdir(CUR_DIR):
     for item in LS_DIR:
         SEARCH_DIR.append(str(item.lower()))
         
-    __all__ = ['choose', 'exit', 'previous', 'search', 'terminal', 'newfile', 'deletefile', 'update', 'makedir', 'removedir', 'build', 'execute']
+    __all__ = [
+    'goto', 'previous', 'search', 
+    'update', 'terminal', 'exit', 'clear', 
+    'newfile', 'deletefile',  
+    'makedir', 'removedir', 
+    'build', 'execute'
+    ]
 
     com = str(input(colored("\npydirman", "blue", attrs=['underline']) +colored(">", "blue"))).strip()
-    if com.lower() == "c":
+    if com.lower() == "g":
 
         try: 
             ask = input("Enter your index: ")
@@ -131,7 +137,10 @@ def __chdir(CUR_DIR):
     elif com.lower() == "e":
         print(colored("See you soon!\n", "white"))
         sys.exit(0)
-        
+
+    elif com.lower() == "c":
+        os.system("clear && pydirman {}".format(CUR_DIR))
+
     elif com.lower() == "b":
         print("=====================================================================")
         counter = 0
@@ -148,7 +157,7 @@ def __chdir(CUR_DIR):
             buildfile = str(input("Enter file name [build]: "))
             os.system("gcc {}".format(buildfile))
         except KeyboardInterrupt:
-            print("File not deleted")
+            print("File not built")
             
         __chdir(os.getcwd())
 
@@ -168,14 +177,14 @@ def __chdir(CUR_DIR):
             exefile = str(input("Enter file name [execute]: "))
             os.system("./{}".format(exefile))
         except KeyboardInterrupt:
-            print("File not deleted")
+            print("File not executed")
             
         __chdir(os.getcwd())
 
     elif com.lower() == "?":
         print("\n[help]    = "+ colored("[?]", 'red'))
-        print("[walker]  = "+ colored("[c]", 'red') +"hoose-" +colored("[p]", 'red') +"revious-"+ colored("[s]", 'red') +"earch")
-        print("[utility] = "+ colored("[u]", 'red') +"pdate-"+ colored("[t]", 'red') +"erminal-" +colored("[e]", 'red') +"xit")
+        print("[walker]  = "+ colored("[g]", 'red') +"oto-" +colored("[p]", 'red') +"revious-"+ colored("[s]", 'red') +"earch")
+        print("[utility] = "+ colored("[u]", 'red') +"pdate-"+ colored("[t]", 'red') +"erminal-" +colored("[e]", 'red') +"xit-" +colored("[c]", 'red') +"lear")
         print("[writer]  = "+ colored("[n]", 'red') +"ewfile-" +colored("[d]", 'red') +"eletefile")
         print("[folder]  = "+ colored("[m]", 'red') +"akedir-" +colored("[r]", 'red') +"emovedir")
         print("[builder] = "+ colored("[b]", 'red') +"uild-e" +colored("[x]", 'red') +"ecute")
