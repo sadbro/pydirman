@@ -20,7 +20,7 @@ if len(sys.argv) > 1:
         sys.exit()
     else:
         try:
-            os.chdir(str(sys.argv[1]))
+            os.chdir(sys.argv[1])
         except NotADirectoryError:
             cprint("\nEnter a Directory path only!!", "red", attrs=['bold'])
             sys.exit(1)
@@ -54,11 +54,7 @@ def __display():
     print("TOTAL FILES/DIRECTORIES: "+ colored("{}".format(counter), "red", attrs=['bold']))
     print("YOUR CURRENT LOCATION: "+ colored("{}".format(CUR_PATH), "red", attrs=['bold']))
     print("=====================================================================")
-    print("[walker]  = "+ colored("[c]", 'red') +"hoose-" +colored("[p]", 'red') +"revious-"+ colored("[s]", 'red') +"earch")
-    print("[utility] = "+ colored("[u]", 'red') +"pdate-"+ colored("[t]", 'red') +"erminal-" +colored("[e]", 'red') +"xit")
-    print("[writer]  = "+ colored("[n]", 'red') +"ewfile-" +colored("[d]", 'red') +"eletefile")
-    print("[folder]  = "+ colored("[m]", 'red') +"akedir-" +colored("[r]", 'red') +"emovedir")
-
+    print("[helpmenu] = "+ colored("[?]", 'red'))
 
 def __chdir(CUR_DIR):
 
@@ -68,7 +64,7 @@ def __chdir(CUR_DIR):
     for item in LS_DIR:
         SEARCH_DIR.append(str(item.lower()))
         
-    __all__ = ['choose', 'exit', 'previous', 'search', 'terminal', 'newfile', 'deletefile', 'update', 'makedir', 'removedir']
+    __all__ = ['choose', 'exit', 'previous', 'search', 'terminal', 'newfile', 'deletefile', 'update', 'makedir', 'removedir', 'build', 'execute']
 
     com = str(input(colored("\npydirman", "blue", attrs=['underline']) +colored(">", "blue"))).strip()
     if com.lower() == "c":
@@ -135,6 +131,55 @@ def __chdir(CUR_DIR):
     elif com.lower() == "e":
         print(colored("See you soon!\n", "white"))
         sys.exit(0)
+        
+    elif com.lower() == "b":
+        print("=====================================================================")
+        counter = 0
+        for index,FI_FO in enumerate(LS_DIR):
+            if os.path.isfile(FI_FO):
+                print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
+                counter += 1
+            
+            #elif os.path.isdir(FI_FO):
+                #print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
+                #counter += 1
+        print("=====================================================================")
+        try:
+            buildfile = str(input("Enter file name [build]: "))
+            os.system("gcc {}".format(buildfile))
+        except KeyboardInterrupt:
+            print("File not deleted")
+            
+        __chdir(os.getcwd())
+
+    elif com.lower() == "x":
+        print("=====================================================================")
+        counter = 0
+        for index,FI_FO in enumerate(LS_DIR):
+            if os.path.isfile(FI_FO):
+                print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
+                counter += 1
+            
+            #elif os.path.isdir(FI_FO):
+                #print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
+                #counter += 1
+        print("=====================================================================")
+        try:
+            exefile = str(input("Enter file name [execute]: "))
+            os.system("./{}".format(exefile))
+        except KeyboardInterrupt:
+            print("File not deleted")
+            
+        __chdir(os.getcwd())
+
+    elif com.lower() == "?":
+        print("\n[help]    = "+ colored("[?]", 'red'))
+        print("[walker]  = "+ colored("[c]", 'red') +"hoose-" +colored("[p]", 'red') +"revious-"+ colored("[s]", 'red') +"earch")
+        print("[utility] = "+ colored("[u]", 'red') +"pdate-"+ colored("[t]", 'red') +"erminal-" +colored("[e]", 'red') +"xit")
+        print("[writer]  = "+ colored("[n]", 'red') +"ewfile-" +colored("[d]", 'red') +"eletefile")
+        print("[folder]  = "+ colored("[m]", 'red') +"akedir-" +colored("[r]", 'red') +"emovedir")
+        print("[builder] = "+ colored("[b]", 'red') +"uild-e" +colored("[x]", 'red') +"ecute")
+        __chdir(CUR_DIR)
 
     elif com.lower() == "p":
         os.chdir("..")
@@ -173,7 +218,7 @@ def __chdir(CUR_DIR):
         
     elif com.lower() == "t":
         termDir = os.getcwd()
-        os.system("qterminal -d -w {} >/dev/null 2>&1".format(termDir))
+        os.system("qterminal -w {} >/dev/null 2>&1".format(termDir))
         __chdir(os.getcwd())
         
     elif com.lower() == "n":
