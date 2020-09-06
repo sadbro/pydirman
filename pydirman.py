@@ -22,7 +22,10 @@ if len(sys.argv) > 1:
         try:
             os.chdir(sys.argv[1])
         except NotADirectoryError:
-            cprint("\nEnter a Directory path only!!", "red", attrs=['bold'])
+            cprint("Enter a Directory path only!!\n", "red", attrs=['bold'])
+            sys.exit(1)
+        except FileNotFoundError:
+            cprint("Directory not Found!!", "red", attrs=['bold'])
             sys.exit(1)
 
 elif len(sys.argv):
