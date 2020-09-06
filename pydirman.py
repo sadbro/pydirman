@@ -54,7 +54,7 @@ def __display():
     print("TOTAL FILES/DIRECTORIES: "+ colored("{}".format(counter), "red", attrs=['bold']))
     print("YOUR CURRENT LOCATION: "+ colored("{}".format(CUR_PATH), "red", attrs=['bold']))
     print("=====================================================================")
-    print("[helpmenu] = "+ colored("[?]", 'red'))
+    print("[help] = "+ colored("[?]", 'red'))
 
 def __chdir(CUR_DIR):
 
@@ -87,7 +87,10 @@ def __chdir(CUR_DIR):
                         __chdir(LS_DIR[ask])
 
                     elif os.path.isfile(str(LS_DIR[ask])):
-                        porr = str(input(colored("FILE=[{}]\n".format(str(LS_DIR[ask])), "white")+"[p]rint/[c]ancel/[e]dit: "))
+                        rp = colored('[p]', 'red')
+                        rc = colored('[c]', 'red')
+                        re = colored('[e]', 'red')
+                        porr = str(input(colored("FILE=[{}]\n".format(str(LS_DIR[ask])), "white")+"{}rint/{}ancel/{}dit: ".format(rp, rc, re)))
                         CUR_FILE = str(LS_DIR[ask])
 
                         if porr.lower() == "p":
@@ -154,10 +157,15 @@ def __chdir(CUR_DIR):
                 #counter += 1
         print("=====================================================================")
         try:
-            buildfile = str(input("Enter file name [build]: "))
+            buildindex = int(input("Enter file index [build]: "))
+            buildfile = LS_DIR[buildindex]
             os.system("gcc {}".format(buildfile))
         except KeyboardInterrupt:
             print("File not built")
+        except ValueError:
+            print("Enter Correctly")
+        except IndexError:
+            print("Enter Correctly")
             
         __chdir(os.getcwd())
 
@@ -174,10 +182,15 @@ def __chdir(CUR_DIR):
                 #counter += 1
         print("=====================================================================")
         try:
-            exefile = str(input("Enter file name [execute]: "))
+            exeindex = int(input("Enter file index [execute]: "))
+            exefile = LS_DIR[exeindex]
             os.system("./{}".format(exefile))
         except KeyboardInterrupt:
             print("File not executed")
+        except ValueError:
+            print("Enter Correctly")
+        except IndexError:
+            print("Enter Correctly")
             
         __chdir(os.getcwd())
 
@@ -252,11 +265,16 @@ def __chdir(CUR_DIR):
                 #counter += 1
         print("=====================================================================")
         try:
-            delfile = str(input("Enter file name [delete]: "))
+            delfileindex = int(input("Enter file index [delete]: "))
+            delfile = LS_DIR[delfileindex]
             os.system("sudo rm {}".format(delfile))
         except KeyboardInterrupt:
             print("File not deleted")
-            
+        except ValueError:
+            print("Enter Correctly")
+        except IndexError:
+            print("Enter Correctly")
+         
         __chdir(os.getcwd())
         
     elif com.lower() == "u":
@@ -300,6 +318,10 @@ def __chdir(CUR_DIR):
             os.system("rmdir {}".format(dirname_rm))
         except KeyboardInterrupt:
             print("Directory not deleted")
+        except ValueError:
+            print("Enter Correctly")
+        except IndexError:
+            print("Enter Correctly")
             
         __chdir(os.getcwd())
         
