@@ -22,12 +22,12 @@ if len(sys.argv) > 1:
         try:
             os.chdir(sys.argv[1])
         except NotADirectoryError:
-            cprint("Enter a Directory path only!!\n", "red", attrs=['bold'])
+            cprint("\nEnter a Directory path only!!", "red", attrs=['bold'])
             sys.exit(1)
         except FileNotFoundError:
-            cprint("Directory not Found!!", "red", attrs=['bold'])
+            cprint("Directory does not exist!!\n", "red", attrs=['bold'])
             sys.exit(1)
-
+            
 elif len(sys.argv):
     CUR_DIR = os.getcwd()
 
@@ -72,7 +72,7 @@ def __chdir(CUR_DIR):
     'update', 'terminal', 'exit', 'clear', 
     'newfile', 'deletefile',  
     'makedir', 'removedir', 
-    'build', 'execute'
+    'build', 'execute',
     ]
 
     com = str(input(colored("\npydirman", "blue", attrs=['underline']) +colored(">", "blue"))).strip()
@@ -162,7 +162,12 @@ def __chdir(CUR_DIR):
         try:
             buildindex = int(input("Enter file index [build]: "))
             buildfile = LS_DIR[buildindex]
-            os.system("gcc {}".format(buildfile))
+            build_dict = buildfile.split(".")
+            buildtype = str(build_dict[1])
+            if buildtype == 'c':
+                os.system("gcc {}".format(buildfile))
+            elif buildtype == 'cpp':
+                os.system("g++ {}".format(buildfile))
         except KeyboardInterrupt:
             print("File not built")
         except ValueError:
@@ -187,13 +192,22 @@ def __chdir(CUR_DIR):
         try:
             exeindex = int(input("Enter file index [execute]: "))
             exefile = LS_DIR[exeindex]
-            os.system("./{}".format(exefile))
+            exe_dict = exefile.split('.')
+            exetype = str(exe_dict[1])
+            if exetype == "out":
+                print("---------------------------------C{}----------------------------------")
+                os.system("./{}".format(exefile))
+            elif exetype == "py":
+                print("--------------------------------PYTHON--------------------------------")
+                os.system("python3 {}".format(exefile))
+            print("---------------------------------------------------------------------")
+
         except KeyboardInterrupt:
             print("File not executed")
         except ValueError:
-            print("Enter Correctly")
+            print("Enter Correctly\n")
         except IndexError:
-            print("Enter Correctly")
+            print("Enter Correctly\n")
             
         __chdir(os.getcwd())
 
