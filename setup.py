@@ -4,6 +4,7 @@ import sys
 import os
 
 require = ['termcolor', 'pip']
+os_require = ['qterminal', 'gedit', 'gcc', 'g++']
 PATH = os.path.realpath('.')
 docs = sorted(os.listdir(PATH))
 
@@ -12,9 +13,9 @@ for package in require:
         pass
     else:
         os.system('sudo apt install python3-{} >/dev/null 2>&1'.format(package))
-        
-os.system('sudo apt install qterminal -i >/dev/null 2>&1')
-os.system('sudo apt install gedit -i >/dev/null 2>&1')
+
+for os_package in os_require:
+    os.system('sudo apt install {} -i >/dev/null 2>&1'.format(os_package))
 
 def fixer(cmd):
     os.system('sudo chmod 777 {}'.format(cmd))
