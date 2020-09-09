@@ -85,6 +85,7 @@ def __chdir(CUR_DIR):
 
                 try:
                     if os.path.isdir(str(LS_DIR[ask])):
+                        os.system("clear")
                         os.chdir(str(LS_DIR[ask]))
                         __display()
                         __chdir(LS_DIR[ask])
