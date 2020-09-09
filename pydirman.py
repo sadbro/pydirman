@@ -221,6 +221,7 @@ def __chdir(CUR_DIR):
         __chdir(CUR_DIR)
 
     elif com.lower() == "p":
+        os.system("clear")
         os.chdir("..")
         if os.getcwd() == CUR_DIR:
             cprint("\nEnd of the line, buddy!", "blue", attrs=['bold'])
