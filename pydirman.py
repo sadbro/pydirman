@@ -348,7 +348,7 @@ def __chdir(CUR_DIR):
            __chdir(os.getcwd())
 
     except KeyboardInterrupt:
-        print("Keyboard interrupt detected..Press e for exit")
+        print("\nKeyboard interrupt detected..Press e for exit")
         __chdir(os.getcwd)
 
 __display()
