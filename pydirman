@@ -1,4 +1,0 @@
-#!/bin/bash
-
-clear && python3 /etc/pydirman.py $@
-
