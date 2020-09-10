@@ -102,7 +102,7 @@ def __chdir(CUR_DIR):
 
                             if porr.lower() == "p":
                                 print(colored("\n" +"="*56 +"START"+ "="*56 +"\n", "red"))
-                                os.system("cat " +CUR_FILE)
+                                os.system("./reader.out {}".format(CUR_DIR))
                                 print(colored("\n" +"="*57 +"END"+ "="*57+ "\n", "red"))
                                 stat = str(input("[c]ontinue/[e]xit: "))
 
