@@ -29,5 +29,6 @@ else:
     os.system('cp {}/{} /bin/'.format(PATH, 'pydirman'))
    
 os.system('cp {}/pydirman.py /etc/'.format(PATH))
+os.system('cp {}/reader.out /etc/'.format(PATH))
 os.chdir('/bin/')
 fixer('pydirman')
