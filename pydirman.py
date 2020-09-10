@@ -43,7 +43,7 @@ def __display():
 
     print(colored("\nPYTHON DIRECTORY MANAGEMENT\n", "red", attrs=['underline', 'bold']))
     print(colored("Directory", "yellow") +" | "+ colored("File", "white"))
-    print("=====================================================================")
+    print("============================================================================")
     counter = 0
     for index,FI_FO in enumerate(LS_DIR):
         if os.path.isfile(FI_FO):
@@ -53,10 +53,10 @@ def __display():
             print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
             counter += 1
 
-    print("=====================================================================")
+    print("============================================================================")
     print("TOTAL FILES/DIRECTORIES: "+ colored("{}".format(counter), "red", attrs=['bold']))
     print("YOUR CURRENT LOCATION: "+ colored("{}".format(CUR_PATH), "red", attrs=['bold']))
-    print("=====================================================================")
+    print("============================================================================")
     print("[help] = "+ colored("[?]", 'red'))
 
 def __chdir(CUR_DIR):
@@ -66,291 +66,290 @@ def __chdir(CUR_DIR):
     SEARCH_DIR = []
     for item in LS_DIR:
         SEARCH_DIR.append(str(item.lower()))
+    SOURCE_FILE_PATH = "/etc/pydirman.py"
         
     __all__ = [
-    'goto', 'previous', 'search', 
-    'update', 'terminal', 'exit', 'clear', 
-    'newfile', 'deletefile',  
-    'makedir', 'removedir', 
+    '?', 'help', 'editsource',
+    'goto', 'previous', 'search',
+    'update', 'terminal', 'exit', 'clear',
+    'newfile', 'deletefile',
+    'makedir', 'removedir',
     'build', 'execute',
     ]
 
-    com = str(input(colored("\npydirman", "blue", attrs=['underline']) +colored(">", "blue"))).strip()
-    if com.lower() == "g":
+    try:
+        com = str(input(colored("\npydirman", "blue", attrs=['underline']) +colored(">", "blue"))).strip()
+        if com.lower() == "g":
 
-        try: 
-            ask = input("Enter your index: ")
-            if ask.isdigit():
-                ask = int(ask)
+            try: 
+                ask = input("Enter your index: ")
+                if ask.isdigit():
+                    ask = int(ask)
 
-                try:
-                    if os.path.isdir(str(LS_DIR[ask])):
-                        os.system("clear")
-                        os.chdir(str(LS_DIR[ask]))
-                        __display()
-                        __chdir(LS_DIR[ask])
+                    try:
+                        if os.path.isdir(str(LS_DIR[ask])):
+                            os.system("clear")
+                            os.chdir(str(LS_DIR[ask]))
+                            __display()
+                            __chdir(LS_DIR[ask])
 
-                    elif os.path.isfile(str(LS_DIR[ask])):
-                        rp = colored('[p]', 'red')
-                        rc = colored('[c]', 'red')
-                        re = colored('[e]', 'red')
-                        porr = str(input(colored("FILE=[{}]\n".format(str(LS_DIR[ask])), "white")+"{}rint/{}ancel/{}dit: ".format(rp, rc, re)))
-                        CUR_FILE = str(LS_DIR[ask])
+                        elif os.path.isfile(str(LS_DIR[ask])):
+                            rp = colored('[p]', 'red')
+                            rc = colored('[c]', 'red')
+                            re = colored('[e]', 'red')
+                            porr = str(input(colored("FILE=[{}]\n".format(str(LS_DIR[ask])), "white")+"{}rint/{}ancel/{}dit: ".format(rp, rc, re)))
+                            CUR_FILE = str(LS_DIR[ask])
 
-                        if porr.lower() == "p":
-                            print(colored("\n" +"="*56 +"START"+ "="*56 +"\n", "red"))
-                            os.system("cat " +CUR_FILE)
-                            print(colored("\n" +"="*57 +"END"+ "="*57+ "\n", "red"))
-                            stat = str(input("[c]ontinue/[e]xit: "))
+                            if porr.lower() == "p":
+                                print(colored("\n" +"="*56 +"START"+ "="*56 +"\n", "red"))
+                                os.system("cat " +CUR_FILE)
+                                print(colored("\n" +"="*57 +"END"+ "="*57+ "\n", "red"))
+                                stat = str(input("[c]ontinue/[e]xit: "))
 
-                            if stat.lower() == "c":
-                                __display()
-                                __chdir(CUR_DIR)
+                                if stat.lower() == "c":
+                                    __display()
+                                    __chdir(CUR_DIR)
 
-                            elif stat.lower() == "e":
-                                print(colored("See you soon!", "white"))
-                                sys.exit(0)
+                                elif stat.lower() == "e":
+                                    print(colored("See you soon!", "white"))
+                                    sys.exit(0)
                                 
-                            else:
-                                print("Enter a valid command!")
-                                __chdir(os.getcwd())
+                                else:
+                                    print("Enter a valid command!")
+                                    __chdir(os.getcwd())
 
-                        elif porr.lower() == "c":
-                            __chdir(os.getcwd())
+                            elif porr.lower() == "c":
+                                __chdir(os.getcwd())
                         
-                        elif porr.lower() == "e":
-                            os.system("sudo gedit {} >/dev/null 2>&1".format(CUR_FILE))
-                            __chdir(os.getcwd())
+                            elif porr.lower() == "e":
+                                os.system("sudo gedit {} >/dev/null 2>&1".format(CUR_FILE))
+                                __chdir(os.getcwd())
                             
-                        else:
-                            print("Enter a valid command")
-                            __chdir(os.getcwd())
+                            else:
+                                print("Enter a valid command")
+                                __chdir(os.getcwd())
                 
-                except IndexError:
-                   print("oops, you entered a wrong number.")
-                   __chdir(os.getcwd())
+                    except IndexError:
+                       print("oops, you entered a wrong number.")
+                       __chdir(os.getcwd())
                     
-            elif ask.isalpha():
-                print("Please enter index of the file :[")
-                print("[HINT] if you can't find the index then you can find it by typing [s] ;]")
-                __chdir(os.getcwd())
+                elif ask.isalpha():
+                    print("Please enter index of the file :[")
+                    print("[HINT] if you can't find the index then you can find it by typing [s] ;]")
+                    __chdir(os.getcwd())
   
 
-        except PermissionError:
-            cprint("\nThis directory is off limits!! Are you root?? I don't think so. BACK OFF!\n".upper(), "red", attrs=['bold'])
-            sleep(2) 
+            except PermissionError:
+                cprint("\nThis directory is off limits!! Are you root?? I don't think so. BACK OFF!\n".upper(), "red", attrs=['bold'])
+                sleep(2) 
+                __chdir(os.getcwd())
+
+        elif com.lower() == "e":
+            print(colored("See you soon!\n", "white"))
+            sys.exit(0)
+
+        elif com.lower() == "ed":
+            os.system("sudo gedit {} >/dev/null 2>&1".format(SOURCE_FILE_PATH))
             __chdir(os.getcwd())
 
-    elif com.lower() == "e":
-        print(colored("See you soon!\n", "white"))
-        sys.exit(0)
+        elif com.lower() == "c":
+            os.system("clear && pydirman {}".format(CUR_DIR))
 
-    elif com.lower() == "c":
-        os.system("clear && pydirman {}".format(CUR_DIR))
-
-    elif com.lower() == "b":
-        print("=====================================================================")
-        counter = 0
-        for index,FI_FO in enumerate(LS_DIR):
-            if os.path.isfile(FI_FO):
-                print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
-                counter += 1
+        elif com.lower() == "b":
+            print("========================================================================")
+            counter = 0
+            for index,FI_FO in enumerate(LS_DIR):
+                if os.path.isfile(FI_FO):
+                    print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
+                    counter += 1
             
-            #elif os.path.isdir(FI_FO):
-                #print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
-                #counter += 1
-        print("=====================================================================")
-        try:
-            buildindex = int(input("Enter file index [build]: "))
-            buildfile = LS_DIR[buildindex]
-            build_dict = buildfile.split(".")
-            buildtype = str(build_dict[1])
-            if buildtype == 'c':
-                os.system("gcc {}".format(buildfile))
-            elif buildtype == 'cpp':
-                os.system("g++ {}".format(buildfile))
-        except KeyboardInterrupt:
-            print("File not built")
-        except ValueError:
-            print("Enter Correctly")
-        except IndexError:
-            print("Enter Correctly")
+                #elif os.path.isdir(FI_FO):
+                    #print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
+                    #counter += 1
+            print("========================================================================")
+            try:
+                buildindex = int(input("Enter file index [build]: "))
+                buildfile = LS_DIR[buildindex]
+                build_dict = buildfile.split(".")
+                buildname = str(build_dict[0])
+                buildtype = str(build_dict[1])
+                if buildtype == 'c':
+                    os.system("gcc {} -o {}_c.out".format(buildfile, buildname))
+                elif buildtype == 'cpp':
+                    os.system("g++ {} -o {}_cpp.out".format(buildfile, buildname))
+            except KeyboardInterrupt:
+                print("File not built")
+            except ValueError:
+                print("Enter Correctly")
+            except IndexError:
+                print("Enter Correctly")
             
-        __chdir(os.getcwd())
+            __chdir(os.getcwd())
 
-    elif com.lower() == "x":
-        print("=====================================================================")
-        counter = 0
-        for index,FI_FO in enumerate(LS_DIR):
-            if os.path.isfile(FI_FO):
-                print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
-                counter += 1
+        elif com.lower() == "x":
+            print("========================================================================")
+            counter = 0
+            for index,FI_FO in enumerate(LS_DIR):
+                if os.path.isfile(FI_FO):
+                    print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
+                    counter += 1
             
-            #elif os.path.isdir(FI_FO):
-                #print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
-                #counter += 1
-        print("=====================================================================")
-        try:
-            exeindex = int(input("Enter file index [execute]: "))
-            exefile = LS_DIR[exeindex]
-            exe_dict = exefile.split('.')
-            exetype = str(exe_dict[1])
-            if exetype == "out":
-                print("---------------------------------C{}----------------------------------")
-                os.system("./{}".format(exefile))
-            elif exetype == "py":
-                print("--------------------------------PYTHON--------------------------------")
-                os.system("python3 {}".format(exefile))
-            print("---------------------------------------------------------------------")
+                #elif os.path.isdir(FI_FO):
+                    #print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
+                    #counter += 1
+            print("========================================================================")
+            try:
+                exeindex = int(input("Enter file index [execute]: "))
+                exefile = LS_DIR[exeindex]
+                exe_dict = exefile.split('.')
+                exetype = str(exe_dict[1])
+                if exetype == "out":
+                    print("---------------------------------C{}--------------------------------")
+                    os.system("./{}".format(exefile))
+                elif exetype == "py":
+                    print("--------------------------------PYTHON------------------------------")
+                    os.system("python3 {}".format(exefile))
+                print("--------------------------------------------------------------------")
 
-        except KeyboardInterrupt:
-            print("File not executed")
-        except ValueError:
-            print("Enter Correctly\n")
-        except IndexError:
-            print("Enter Correctly\n")
-            
-        __chdir(os.getcwd())
+            except KeyboardInterrupt:
+                print("File not executed")
+            except ValueError:
+                print("Enter Correctly\n")
+            except IndexError:
+                print("Enter Correctly\n")
+                
+            __chdir(os.getcwd())
 
-    elif com.lower() == "?":
-        print("\n[help]    = "+ colored("[?]", 'red'))
-        print("[walker]  = "+ colored("[g]", 'red') +"oto-" +colored("[p]", 'red') +"revious-"+ colored("[s]", 'red') +"earch")
-        print("[utility] = "+ colored("[u]", 'red') +"pdate-"+ colored("[t]", 'red') +"erminal-" +colored("[e]", 'red') +"xit-" +colored("[c]", 'red') +"lear")
-        print("[writer]  = "+ colored("[n]", 'red') +"ewfile-" +colored("[d]", 'red') +"eletefile")
-        print("[folder]  = "+ colored("[m]", 'red') +"akedir-" +colored("[r]", 'red') +"emovedir")
-        print("[builder] = "+ colored("[b]", 'red') +"uild-e" +colored("[x]", 'red') +"ecute")
-        __chdir(CUR_DIR)
-
-    elif com.lower() == "p":
-        os.system("clear")
-        os.chdir("..")
-        if os.getcwd() == CUR_DIR:
-            cprint("\nEnd of the line, buddy!", "blue", attrs=['bold'])
-            __chdir(CUR_DIR)
-        else:
-            CUR_DIR = os.getcwd()
-            __display()
+        elif (com.lower() == "?")or(com.lower() == "h"):
+            print("\n[help]    = "+ colored("[?/h]", 'red') +"elp-"+ colored("[ed]", 'red') +"itsource")
+            print("[walker]  = "+ colored("[g]", 'red') +"oto-" +colored("[p]", 'red') +"revious-"+ colored("[s]", 'red') +"earch")
+            print("[utility] = "+ colored("[c]", 'red') +"lear-"+ colored("[t]", 'red') +"erminal-" +colored("[e]", 'red') +"xit-" +colored("[c]", 'red') +"lear")
+            print("[writer]  = "+ colored("[n]", 'red') +"ewfile-" +colored("[d]", 'red') +"eletefile")
+            print("[folder]  = "+ colored("[m]", 'red') +"akedir-" +colored("[r]", 'red') +"emovedir")
+            print("[builder] = "+ colored("[b]", 'red') +"uild-e" +colored("[x]", 'red') +"ecute")
             __chdir(CUR_DIR)
 
-    elif com.lower() == "s":
-        search = str(input("\nEnter your search: ")).strip()
-        #cacheDir = []
-        #for obj in LS_DIR:
-        #    if search in obj:
-        #        cacheDir.append(obj)
+        elif com.lower() == "p":
+            os.system("clear")
+            os.chdir("..")
+            if os.getcwd() == CUR_DIR:
+                cprint("\nEnd of the line, buddy!", "blue", attrs=['bold'])
+                __chdir(CUR_DIR)
+            else:
+                CUR_DIR = os.getcwd()
+                __display()
+                __chdir(CUR_DIR)
+
+        elif com.lower() == "s":
+            search = str(input("\nEnter your search: ")).strip()
+            #cacheDir = []
+            #for obj in LS_DIR:
+            #    if search in obj:
+            #        cacheDir.append(obj)
                 
-        search = search.lower()
-        if search in SEARCH_DIR:
-            print("File/Folder found. " +colored("\nindex: [{}]".format(SEARCH_DIR.index(search)), "red", attrs=['bold']))
-            if os.path.isfile(search):
-                cprint("is a [FILE]", "red", attrs=['bold'])
-            elif os.path.isdir(search):
-                cprint("is a [DIRECTORY]", "red", attrs=['bold'])
-        #    print(cacheDir)
+            search = search.lower()
+            if search in SEARCH_DIR:
+                print("File/Folder found. " +colored("\nindex: [{}]".format(SEARCH_DIR.index(search)), "red", attrs=['bold']))
+                if os.path.isfile(search):
+                    cprint("is a [FILE]", "red", attrs=['bold'])
+                elif os.path.isdir(search):
+                    cprint("is a [DIRECTORY]", "red", attrs=['bold'])
+            #    print(cacheDir)
             
-        #elif len(cacheDir) > 1:
-        #    print("Multiple instances found! Showing all")
-        #    for inst in cacheDir:
-        #        print("[{}] {}".format(SEARCH_DIR.index(inst), inst))
+            #elif len(cacheDir) > 1:
+            #    print("Multiple instances found! Showing all")
+            #    for inst in cacheDir:
+            #        print("[{}] {}".format(SEARCH_DIR.index(inst), inst))
                 
-        else:
-            print("Sorry. your results returned no results. maybe you didn't enter the correct name.")
-        __chdir(CUR_DIR)
+            else:
+                print("Sorry. your results returned no results. maybe you didn't enter the correct name.")
+            __chdir(CUR_DIR)
         
-    elif com.lower() == "t":
-        termDir = os.getcwd()
-        os.system("qterminal -w {} >/dev/null 2>&1".format(termDir))
-        __chdir(os.getcwd())
+        elif com.lower() == "t":
+            termDir = os.getcwd()
+            os.system("qterminal -w {} >/dev/null 2>&1".format(termDir))
+            __chdir(os.getcwd())
         
-    elif com.lower() == "n":
-        try:
-            filename = str(input("Enter file name [create]: "))
-            os.system("sudo gedit {} >/dev/null 2>&1".format(filename))
-        except KeyboardInterrupt:
-            print("File not created")
+        elif com.lower() == "n":
+            try:
+                filename = str(input("Enter file name [create]: "))
+                os.system("sudo gedit {} >/dev/null 2>&1".format(filename))
+            except KeyboardInterrupt:
+                print("File not created")
             
-        __chdir(os.getcwd())
+            __chdir(os.getcwd())
         
-    elif com.lower() == "d":
-        print("=====================================================================")
-        counter = 0
-        for index,FI_FO in enumerate(LS_DIR):
-            if os.path.isfile(FI_FO):
-                print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
-                counter += 1
-            
-            #elif os.path.isdir(FI_FO):
-                #print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
-                #counter += 1
-        print("=====================================================================")
-        try:
-            delfileindex = int(input("Enter file index [delete]: "))
-            delfile = LS_DIR[delfileindex]
-            os.system("sudo rm {}".format(delfile))
-        except KeyboardInterrupt:
-            print("File not deleted")
-        except ValueError:
-            print("Enter Correctly")
-        except IndexError:
-            print("Enter Correctly")
+        elif com.lower() == "d":
+            print("============================================================================================================================")
+            counter = 0
+            for index,FI_FO in enumerate(LS_DIR):
+                if os.path.isfile(FI_FO):
+                    print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
+                    counter += 1
+
+                #elif os.path.isdir(FI_FO):
+                    #print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
+                    #counter += 1
+            print("============================================================================================================================")
+            try:
+                delfileindex = int(input("Enter file index [delete]: "))
+                delfile = LS_DIR[delfileindex]
+                os.system("sudo rm {}".format(delfile))
+            except KeyboardInterrupt:
+                print("File not deleted")
+            except ValueError:
+                print("Enter Correctly")
+            except IndexError:
+                print("Enter Correctly")
          
-        __chdir(os.getcwd())
-        
-    elif com.lower() == "u":
-        print("=====================================================================")
-        counter = 0
-        for index,FI_FO in enumerate(sorted(os.listdir(os.getcwd()))):
-            if os.path.isfile(FI_FO):
-                print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
-                counter += 1
-            elif os.path.isdir(FI_FO):
-                print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
-                counter += 1
-        print("=====================================================================")
-        __chdir(os.getcwd())
-    
-    elif com.lower() == "m":
-        try:
-            dirname_mk = str(input("Enter Directory name: "))
-            os.system("mkdir {}".format(dirname_mk))
-        except KeyboardInterrupt:
-            print("Directory not created!")
+            __chdir(os.getcwd())
+
+        elif com.lower() == "m":
+            try:
+                dirname_mk = str(input("Enter Directory name: "))
+                os.system("mkdir {}".format(dirname_mk))
+            except KeyboardInterrupt:
+                print("Directory not created!")
             
+            __chdir(os.getcwd)
+
+        elif com.lower() == "r":
+            print("============================================================================================================================")
+            counter = 0
+            for index,FI_FO in enumerate(LS_DIR):
+                #if os.path.isfile(FI_FO):
+                    #print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
+                    #counter += 1
+
+                if os.path.isdir(FI_FO):
+                    print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
+                    counter += 1
+            print("============================================================================================================================")
+            try:
+                dirname_rm = str(input("Enter directory name: ")).strip()
+                if dirname_rm in SYS_DIR:
+                    print("You just tried to delete a system file!!")
+                os.system("rmdir {}".format(dirname_rm))
+            except KeyboardInterrupt:
+                print("Directory not deleted")
+            except ValueError:
+                print("Enter Correctly")
+            except IndexError:
+                print("Enter Correctly")
+            
+            __chdir(os.getcwd())
+        
+        elif com.lower() in __all__:
+            print("\nplease enter the the first letter [{}] only".format(com.lower()[0]))
+            __chdir(os.getcwd())
+
+        else:
+           print("\nEnter a valid command!")
+           __chdir(os.getcwd())
+
+    except KeyboardInterrupt:
+        print("Keyboard interrupt detected..Press e for exit")
         __chdir(os.getcwd)
 
-    elif com.lower() == "r":
-        print("=====================================================================")
-        counter = 0
-        for index,FI_FO in enumerate(LS_DIR):
-            #if os.path.isfile(FI_FO):
-                #print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
-                #counter += 1
-            
-            if os.path.isdir(FI_FO):
-                print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
-                counter += 1
-        print("=====================================================================")
-        try:
-            dirname_rm = str(input("Enter directory name: ")).strip()
-            if dirname_rm in SYS_DIR:
-                print("You just tried to delete a system file!!")
-            os.system("rmdir {}".format(dirname_rm))
-        except KeyboardInterrupt:
-            print("Directory not deleted")
-        except ValueError:
-            print("Enter Correctly")
-        except IndexError:
-            print("Enter Correctly")
-            
-        __chdir(os.getcwd())
-        
-    elif com.lower() in __all__:
-        print("\nplease enter the the first letter [{}] only".format(com.lower()[0]))
-        __chdir(os.getcwd())
-
-    else:
-       print("\nEnter a valid command!")
-       __chdir(os.getcwd())
-       
 __display()
 __chdir(CUR_DIR)
