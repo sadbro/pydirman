@@ -22,7 +22,7 @@ def fixer(cmd, ind):
     os.system('sudo chmod {} {}'.format(ind, cmd))
     
 for doc in docs:
-    fixer(doc)
+    fixer(doc, 777)
 
 if 'pydirman' in os.listdir('/bin/'):
     pass
@@ -30,7 +30,7 @@ else:
     os.system('cp ./pydirman /bin/')
    
 os.system('cp ./pydirman.py /etc/')
-os.system('cp ./pydirman/main/reader.out /bin/')
+os.system('cp ./reader.out /bin/')
 fixer('/bin/pydirman', 777)
 fixer('/etc/pydirman.py', 777)
 fixer('/bin/reader.out', 777)
