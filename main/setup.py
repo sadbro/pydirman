@@ -26,10 +26,10 @@ for doc in docs:
 if 'pydirman' in os.listdir('/bin/'):
     pass
 else:
-    os.system('cp {}/pydirman /bin/'.format(PATH))
+    os.system('cp {}/pydirman/main/pydirman /bin/'.format(PATH))
    
-os.system('cp {}/pydirman.py /etc/'.format(PATH))
-os.system('cp {}/reader.out /bin/'.format(PATH))
+os.system('cp {}/pydirman/main/pydirman.py /etc/'.format(PATH))
+os.system('cp {}/pydirman/main/reader.out /bin/'.format(PATH))
 fixer('/bin/pydirman', 777)
 fixer('/etc/pydirman.py', 777)
 fixer('/bin/reader.out', '-x')
