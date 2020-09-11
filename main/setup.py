@@ -2,6 +2,7 @@
 
 import sys
 import os
+os.chdir('.')
 
 require = ['termcolor', 'pip']
 os_require = ['qterminal', 'gedit', 'gcc', 'g++']
