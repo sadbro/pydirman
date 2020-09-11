@@ -30,7 +30,6 @@ else:
    
 os.system('cp {}/pydirman.py /etc/'.format(PATH))
 os.system('cp {}/reader.out /bin/'.format(PATH))
-os.chdir('/bin/')
 fixer('/bin/pydirman', 777)
 fixer('/etc/pydirman.py', 777)
 fixer('/bin/reader.out', '-x')
