@@ -17,8 +17,8 @@ for package in require:
 for os_package in os_require:
     os.system('sudo apt install {} -i >/dev/null 2>&1'.format(os_package))
 
-def fixer(cmd):
-    os.system('sudo chmod 777 {}'.format(cmd))
+def fixer(cmd, ind):
+    os.system('sudo chmod {} {}'.format(ind, cmd))
     
 for doc in docs:
     fixer(doc)
@@ -26,9 +26,11 @@ for doc in docs:
 if 'pydirman' in os.listdir('/bin/'):
     pass
 else:
-    os.system('cp {}/{} /bin/'.format(PATH, 'pydirman'))
+    os.system('cp {}/pydirman /bin/'.format(PATH))
    
 os.system('cp {}/pydirman.py /etc/'.format(PATH))
-os.system('cp {}/reader.out /etc/'.format(PATH))
+os.system('cp {}/reader.out /bin/'.format(PATH))
 os.chdir('/bin/')
-fixer('pydirman')
+fixer('/bin/pydirman', 777)
+fixer('/etc/pydirman.py', 777)
+fixer('/bin/reader.out', '-x')
