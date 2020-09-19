@@ -35,6 +35,28 @@ CUR_DIR = os.getcwd()
 LS_DIR = sorted(os.listdir())
 CUR_PATH = os.path.abspath(CUR_DIR)
 
+def test(file):
+    __file = file.split(".")
+    file_type = __file[1]
+    command = str(input("Enter command [exit|test|gedit] "))
+    if command.lower() == "t":
+        print("--------------------------------------------------------------------")
+        if file_type == 'py':
+            os.system("python3 {}".format(file))
+        elif file_type == 'out':
+            os.system("./{}".format(file))
+        print("--------------------------------------------------------------------")
+        test(file)
+
+    elif command.lower() == "g":
+        os.system("sudo gedit {} >/dev/null 2>&1".format(file))
+        test(file)
+
+    elif command.lower() == "e":
+        os.system("clear")
+        __display()
+        __chdir(os.getcwd())
+
 def __display():
 
     CUR_DIR = os.getcwd()
@@ -74,7 +96,7 @@ def __chdir(CUR_DIR):
     'update', 'terminal', 'exit', 'clear',
     'newfile', 'deletefile',
     'makedir', 'removedir',
-    'build', 'execute',
+    'build', 'execute', 'test'
     ]
 
     try:
@@ -155,6 +177,20 @@ def __chdir(CUR_DIR):
         elif com.lower() == "c":
             os.system("clear && pydirman {}".format(CUR_DIR))
 
+        elif com.lower() == "test":
+            CUR_DIR = os.getcwd()
+            LS_DIR = sorted(os.listdir())
+            file_index = int(input("Enter File index: "))
+            file = LS_DIR[file_index]
+            if os.path.isfile(file):
+                os.system("clear")
+                print("FILE -> {}\n".format(file))
+                test(file)
+
+            elif os.path.isdir(file):
+                print("Enter index of files only !!")
+            __chdir(CUR_DIR)
+
         elif com.lower() == "b":
             print("========================================================================")
             counter = 0
@@ -174,9 +210,9 @@ def __chdir(CUR_DIR):
                 buildname = str(build_dict[0])
                 buildtype = str(build_dict[1])
                 if buildtype == 'c':
-                    os.system("gcc {} -o {}_c.out".format(buildfile, buildname))
+                    os.system("gcc {} -o {}.out".format(buildfile, buildname))
                 elif buildtype == 'cpp':
-                    os.system("g++ {} -o {}_cpp.out".format(buildfile, buildname))
+                    os.system("g++ {} -o {}.out".format(buildfile, buildname))
             except KeyboardInterrupt:
                 print("File not built")
             except ValueError:
@@ -209,7 +245,7 @@ def __chdir(CUR_DIR):
                 elif exetype == "py":
                     print("--------------------------------PYTHON------------------------------")
                     os.system("python3 {}".format(exefile))
-                print("--------------------------------------------------------------------")
+                print("\n--------------------------------------------------------------------")
 
             except KeyboardInterrupt:
                 print("File not executed")
@@ -274,6 +310,7 @@ def __chdir(CUR_DIR):
             try:
                 filename = str(input("Enter file name [create]: "))
                 os.system("sudo gedit {} >/dev/null 2>&1".format(filename))
+                os.system("sudo chmod 777 {}".format(filename))
             except KeyboardInterrupt:
                 print("File not created")
             
