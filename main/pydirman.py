@@ -308,9 +308,10 @@ def __chdir(CUR_DIR):
         
         elif com.lower() == "n":
             try:
-                filename = str(input("Enter file name [create]: "))
-                os.system("sudo gedit {} >/dev/null 2>&1".format(filename))
-                os.system("sudo chmod 777 {}".format(filename))
+                #filename = str(input("Enter file name [create]: "))
+                #os.system("sudo gedit {} >/dev/null 2>&1".format(filename))
+                #os.system("sudo chmod 777 {}".format(filename))
+                os.system("sudo python3 /etc/txted.py >/dev/null 2>&1")
             except KeyboardInterrupt:
                 print("File not created")
             
