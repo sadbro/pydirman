@@ -7,7 +7,6 @@ import os
 
 root = Tk()
 root.title('TxtEd')
-#root.iconbitmap('')
 root.geometry('900x560')
 
 global openStatusName
@@ -85,16 +84,6 @@ fileMenu.add_command(label='Save', command=saveFile)
 fileMenu.add_command(label='Save As', command=saveAsFile)
 fileMenu.add_separator()
 fileMenu.add_command(label='Exit', command=root.quit)
-
-#editMenu = Menu(menu, tearoff=False)
-#menu.add_cascade(label='Edit', menu=editMenu)
-#editMenu.add_command(label='Cut')
-#editMenu.add_command(label='Copy')
-#editMenu.add_command(label='Undo')
-#editMenu.add_command(label='Redo')
-
-#statusBar = Label(root, text='Ready  ', anchor=E)
-#statusBar.pack(fill=X, side=BOTTOM, ipady=5)
 
 root.mainloop()
 
