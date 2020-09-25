@@ -43,9 +43,11 @@ def test(file):
         print("--------------------------------------------------------------------")
         if file_type == 'py':
             os.system("python3 {}".format(file))
-        elif file_type == 'out':
-            os.system("./{}".format(file))
+        elif file_type == 'c' or file_type == 'cpp':
+            os.system("g++ {} -o {}.out && ./{}.out".format(file, __file[0], __file[0]))
         print("--------------------------------------------------------------------")
+        if file_type == 'out':
+            print("Binary File detected.\n")
         test(file)
 
     elif command.lower() == "g":
