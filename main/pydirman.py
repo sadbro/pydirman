@@ -2,7 +2,9 @@
 
 import os
 import sys
+import face_recognition
 from time import sleep
+from cv2 import cv2
 from termcolor import colored, cprint
 
 global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR
@@ -35,6 +37,33 @@ CUR_DIR = os.getcwd()
 LS_DIR = sorted(os.listdir())
 CUR_PATH = os.path.abspath(CUR_DIR)
 
+def Tester(src, dest):
+    imgTrain = cv2.cvtColor(face_recognition.load_image_file(src), cv2.COLOR_BGR2RGB)
+    imgTest = cv2.cvtColor(face_recognition.load_image_file(dest), cv2.COLOR_BGR2RGB)
+
+    LocTrain = face_recognition.face_locations(imgTrain)[0]
+    encodeTrain = face_recognition.face_encodings(imgTrain)[0]
+    cv2.rectangle(imgTrain, (LocTrain[3], LocTrain[0]), (LocTrain[1], LocTrain[2]), color=(0, 255, 0), thickness=2)
+
+    LocTest = face_recognition.face_locations(imgTest)[0]
+    encodeTest = face_recognition.face_encodings(imgTest)[0]
+    cv2.rectangle(imgTest, (LocTest[3], LocTest[0]), (LocTest[1], LocTest[2]), color=(0, 255, 0), thickness=2)
+
+    results = face_recognition.compare_faces([encodeTrain], encodeTest)
+    return results
+
+def Searcher(src, lsdir):
+    print("TestFile: {}".format(src))
+    for test in lsdir:
+        try:
+            if test.split('.')[1] == 'jpg':
+                result = Tester(src, test)
+                print("{}:{}".format(test, result[0]))
+        except IndexError:
+            pass
+
+    __chdir(os.getcwd())
+
 def test(file):
     __file = file.split(".")
     file_type = __file[1]
@@ -43,11 +72,9 @@ def test(file):
         print("--------------------------------------------------------------------")
         if file_type == 'py':
             os.system("python3 {}".format(file))
-        elif file_type == 'c' or file_type == 'cpp':
-            os.system("g++ {} -o {}.out && ./{}.out".format(file, __file[0], __file[0]))
+        elif file_type == 'out':
+            os.system("./{}".format(file))
         print("--------------------------------------------------------------------")
-        if file_type == 'out':
-            print("Binary File detected.\n")
         test(file)
 
     elif command.lower() == "g":
@@ -98,7 +125,8 @@ def __chdir(CUR_DIR):
     'update', 'terminal', 'exit', 'clear',
     'newfile', 'deletefile',
     'makedir', 'removedir',
-    'build', 'execute', 'test'
+    'build', 'execute', 'test',
+    'face'
     ]
 
     try:
@@ -171,6 +199,16 @@ def __chdir(CUR_DIR):
         elif com.lower() == "e":
             print(colored("See you soon!\n", "white"))
             sys.exit(0)
+
+        elif com.lower() == "f":
+            src = int(input("Enter Trainer File: "))
+            src_name, src_type = LS_DIR[src].split('.')
+            if src_type != 'jpg':
+                print("Enter JPG files only\n")
+            else:
+                src_file = LS_DIR[src]
+                Searcher(src_file, LS_DIR)
+            __chdir(os.getcwd())
 
         elif com.lower() == "ed":
             os.system("sudo gedit {} >/dev/null 2>&1".format(SOURCE_FILE_PATH))
