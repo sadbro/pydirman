@@ -4,7 +4,7 @@ import sys
 import os
 os.chdir('.')
 
-require = ['termcolor', 'pip']
+require = ['termcolor', 'pip', 'cmake', 'face-recognition']
 os_require = ['qterminal', 'gedit', 'gcc', 'g++']
 PATH = os.path.realpath('.')
 docs = sorted(os.listdir(PATH))
