@@ -41,13 +41,13 @@ def Tester(src, dest):
     imgTrain = cv2.cvtColor(face_recognition.load_image_file(src), cv2.COLOR_BGR2RGB)
     imgTest = cv2.cvtColor(face_recognition.load_image_file(dest), cv2.COLOR_BGR2RGB)
 
-    LocTrain = face_recognition.face_locations(imgTrain)[0]
+    #LocTrain = face_recognition.face_locations(imgTrain)[0]
     encodeTrain = face_recognition.face_encodings(imgTrain)[0]
-    cv2.rectangle(imgTrain, (LocTrain[3], LocTrain[0]), (LocTrain[1], LocTrain[2]), color=(0, 255, 0), thickness=2)
+    #cv2.rectangle(imgTrain, (LocTrain[3], LocTrain[0]), (LocTrain[1], LocTrain[2]), color=(0, 255, 0), thickness=2)
 
-    LocTest = face_recognition.face_locations(imgTest)[0]
+    #LocTest = face_recognition.face_locations(imgTest)[0]
     encodeTest = face_recognition.face_encodings(imgTest)[0]
-    cv2.rectangle(imgTest, (LocTest[3], LocTest[0]), (LocTest[1], LocTest[2]), color=(0, 255, 0), thickness=2)
+    #cv2.rectangle(imgTest, (LocTest[3], LocTest[0]), (LocTest[1], LocTest[2]), color=(0, 255, 0), thickness=2)
 
     results = face_recognition.compare_faces([encodeTrain], encodeTest)
     return results
@@ -201,8 +201,12 @@ def __chdir(CUR_DIR):
             sys.exit(0)
 
         elif com.lower() == "f":
-            src = int(input("Enter Trainer File: "))
-            src_name, src_type = LS_DIR[src].split('.')
+            try:
+                src = int(input("Enter Trainer File: "))
+                src_type = LS_DIR[src].split('.')[1]
+            except ValueError:
+                print("Enter index only!")
+                __chdir(CUR_DIR)
             if src_type != 'jpg':
                 print("Enter JPG files only\n")
             else:
