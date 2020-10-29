@@ -2,12 +2,14 @@
 
 import os
 import sys
-import face_recognition
+from face_recognition import load_image_file, face_encodings, compare_faces
 from time import sleep
-from cv2 import cv2
+from cv2.cv2 import cvtColor, COLOR_BGR2RGB 
 from termcolor import colored, cprint
 
-global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR
+global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp
+TempC = "#include <stdio.h>\n\nint main(){\n\n    return 0;\n}"
+TempCpp = "#include <iospace>\n\nusing namespace std;\nint main(){\n\n    return 0;\n}"
 
 SYS_DIR = []
 for directory in os.listdir("/"):
@@ -38,27 +40,24 @@ LS_DIR = sorted(os.listdir())
 CUR_PATH = os.path.abspath(CUR_DIR)
 
 def Tester(src, dest):
-    imgTrain = cv2.cvtColor(face_recognition.load_image_file(src), cv2.COLOR_BGR2RGB)
-    imgTest = cv2.cvtColor(face_recognition.load_image_file(dest), cv2.COLOR_BGR2RGB)
+    Train = load_image_file(src)
+    Test = load_image_file(dest)
+    imgTrain = cvtColor(Train, COLOR_BGR2RGB)
+    imgTest = cvtColor(Test, COLOR_BGR2RGB)
 
-    #LocTrain = face_recognition.face_locations(imgTrain)[0]
-    encodeTrain = face_recognition.face_encodings(imgTrain)[0]
-    #cv2.rectangle(imgTrain, (LocTrain[3], LocTrain[0]), (LocTrain[1], LocTrain[2]), color=(0, 255, 0), thickness=2)
+    encodeTrain = face_encodings(imgTrain)[0]
+    encodeTest = face_encodings(imgTest)[0]
 
-    #LocTest = face_recognition.face_locations(imgTest)[0]
-    encodeTest = face_recognition.face_encodings(imgTest)[0]
-    #cv2.rectangle(imgTest, (LocTest[3], LocTest[0]), (LocTest[1], LocTest[2]), color=(0, 255, 0), thickness=2)
-
-    results = face_recognition.compare_faces([encodeTrain], encodeTest)
-    return results
+    results = compare_faces([encodeTrain], encodeTest)
+    return results[0]
 
 def Searcher(src, lsdir):
-    print("TestFile: {}".format(src))
+    print("TestFile: {}\n".format(src))
     for test in lsdir:
         try:
-            if test.split('.')[1] == 'jpg':
+            if test.split('.')[1] == 'jpg' or test.split('.')[1] == 'jpeg':
                 result = Tester(src, test)
-                print("{}:{}".format(test, result[0]))
+                print("{}:{}".format(test, result))
         except IndexError:
             pass
 
@@ -112,6 +111,7 @@ def __display():
 
 def __chdir(CUR_DIR):
 
+    global TempC, TempCpp
     CUR_DIR = os.getcwd()
     LS_DIR = sorted(os.listdir())
     SEARCH_DIR = []
@@ -201,14 +201,10 @@ def __chdir(CUR_DIR):
             sys.exit(0)
 
         elif com.lower() == "f":
-            try:
-                src = int(input("Enter Trainer File: "))
-                src_type = LS_DIR[src].split('.')[1]
-            except ValueError:
-                print("Enter index only!")
-                __chdir(CUR_DIR)
-            if src_type != 'jpg':
-                print("Enter JPG files only\n")
+            src = int(input("Enter Trainer File: "))
+            src_name, src_type = LS_DIR[src].split('.')
+            if src_type != 'jpg' and src_type != 'jpeg':
+                print("Enter JPG files only")
             else:
                 src_file = LS_DIR[src]
                 Searcher(src_file, LS_DIR)
@@ -219,7 +215,9 @@ def __chdir(CUR_DIR):
             __chdir(os.getcwd())
 
         elif com.lower() == "c":
-            os.system("clear && pydirman {}".format(CUR_DIR))
+            os.system("clear && cd {}".format(CUR_DIR))
+            __display()
+            __chdir(CUR_DIR)
 
         elif com.lower() == "test":
             CUR_DIR = os.getcwd()
@@ -352,10 +350,17 @@ def __chdir(CUR_DIR):
         
         elif com.lower() == "n":
             try:
-                #filename = str(input("Enter file name [create]: "))
-                #os.system("sudo gedit {} >/dev/null 2>&1".format(filename))
-                #os.system("sudo chmod 777 {}".format(filename))
-                os.system("sudo python3 /etc/txted.py >/dev/null 2>&1")
+                filename = str(input("Enter file name [create]: "))
+                os.system("touch {}".format(filename))
+                file_split = filename.split('.')
+                file_ext = file_split[1]
+                if file_ext == 'c':
+                    os.system('echo "{}" > {}'.format(TempC, filename))
+                elif file_ext == 'cpp':
+                    os.system('echo "{}" > {}'.format(TempCpp, filename))
+                os.system("sudo gedit {} >/dev/null 2>&1".format(filename))
+                os.system("sudo chmod 777 {}".format(filename))
+                #os.system("sudo python3 /etc/txted.py >/dev/null 2>&1")
             except KeyboardInterrupt:
                 print("File not created")
             
