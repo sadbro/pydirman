@@ -51,7 +51,7 @@ def test(file):
         test(file)
 
     elif command.lower() == "g":
-        os.system("sudo gedit {} >/dev/null 2>&1".format(file))
+        os.system("sudo mousepad {} >/dev/null 2>&1".format(file))
         test(file)
 
     elif command.lower() == "e":
@@ -174,7 +174,7 @@ def __chdir(CUR_DIR):
             sys.exit(0)
 
         elif com.lower() == "ed":
-            os.system("sudo gedit {} >/dev/null 2>&1".format(SOURCE_FILE_PATH))
+            os.system("sudo nano {} >/dev/null 2>&1".format(SOURCE_FILE_PATH))
             __chdir(os.getcwd())
 
         elif com.lower() == "c":
