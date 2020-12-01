@@ -2,9 +2,7 @@
 
 import os
 import sys
-from face_recognition import load_image_file, face_encodings, compare_faces
 from time import sleep
-from cv2.cv2 import cvtColor, COLOR_BGR2RGB 
 from termcolor import colored, cprint
 
 global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp
@@ -38,30 +36,6 @@ elif len(sys.argv):
 CUR_DIR = os.getcwd()
 LS_DIR = sorted(os.listdir())
 CUR_PATH = os.path.abspath(CUR_DIR)
-
-def Tester(src, dest):
-    Train = load_image_file(src)
-    Test = load_image_file(dest)
-    imgTrain = cvtColor(Train, COLOR_BGR2RGB)
-    imgTest = cvtColor(Test, COLOR_BGR2RGB)
-
-    encodeTrain = face_encodings(imgTrain)[0]
-    encodeTest = face_encodings(imgTest)[0]
-
-    results = compare_faces([encodeTrain], encodeTest)
-    return results[0]
-
-def Searcher(src, lsdir):
-    print("TestFile: {}\n".format(src))
-    for test in lsdir:
-        try:
-            if test.split('.')[1] == 'jpg' or test.split('.')[1] == 'jpeg':
-                result = Tester(src, test)
-                print("{}:{}".format(test, result))
-        except IndexError:
-            pass
-
-    __chdir(os.getcwd())
 
 def test(file):
     __file = file.split(".")
@@ -125,8 +99,7 @@ def __chdir(CUR_DIR):
     'update', 'terminal', 'exit', 'clear',
     'newfile', 'deletefile',
     'makedir', 'removedir',
-    'build', 'execute', 'test',
-    'face'
+    'build', 'execute', 'test'
     ]
 
     try:
@@ -199,16 +172,6 @@ def __chdir(CUR_DIR):
         elif com.lower() == "e":
             print(colored("See you soon!\n", "white"))
             sys.exit(0)
-
-        elif com.lower() == "f":
-            src = int(input("Enter Trainer File: "))
-            src_name, src_type = LS_DIR[src].split('.')
-            if src_type != 'jpg' and src_type != 'jpeg':
-                print("Enter JPG files only")
-            else:
-                src_file = LS_DIR[src]
-                Searcher(src_file, LS_DIR)
-            __chdir(os.getcwd())
 
         elif com.lower() == "ed":
             os.system("sudo gedit {} >/dev/null 2>&1".format(SOURCE_FILE_PATH))
