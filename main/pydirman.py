@@ -8,7 +8,7 @@ from termcolor import colored, cprint
 global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, COL
 TempC = "#include <stdio.h>\n\nint main(){\n\n    return 0;\n}"
 TempCpp = "#include <iospace>\n\nusing namespace std;\nint main(){\n\n    return 0;\n}"
-COL = os.system("$COLUMNS")
+COL = os.get_terminal_size()[0]
 
 SYS_DIR = []
 for directory in os.listdir("/"):
@@ -104,8 +104,7 @@ def __chdir(CUR_DIR):
     'goto', 'previous', 'search',
     'update', 'terminal', 'exit', 'clear',
     'newfile', 'deletefile',
-    'makedir', 'removedir',
-    'build', 'execute', 'test'
+    'makedir', 'removedir', 'test'
     ]
 
     try:
@@ -202,78 +201,12 @@ def __chdir(CUR_DIR):
                 print("Enter index of files only !!")
             __chdir(CUR_DIR)
 
-        elif com.lower() == "b":
-            print("="*COL)
-            counter = 0
-            for index,FI_FO in enumerate(LS_DIR):
-                if os.path.isfile(FI_FO):
-                    print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
-                    counter += 1
-
-                #elif os.path.isdir(FI_FO):
-                    #print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
-                    #counter += 1
-            print("="*COL)
-            try:
-                buildindex = int(input("Enter file index [build]: "))
-                buildfile = LS_DIR[buildindex]
-                build_dict = buildfile.split(".")
-                buildname = str(build_dict[0])
-                buildtype = str(build_dict[1])
-                if buildtype == 'c':
-                    os.system("gcc {} -o {}.out".format(buildfile, buildname))
-                elif buildtype == 'cpp':
-                    os.system("g++ {} -o {}.out".format(buildfile, buildname))
-            except KeyboardInterrupt:
-                print("File not built")
-            except ValueError:
-                print("Enter Correctly")
-            except IndexError:
-                print("Enter Correctly")
-
-            __chdir(os.getcwd())
-
-        elif com.lower() == "x":
-            print("="*COL)
-            counter = 0
-            for index,FI_FO in enumerate(LS_DIR):
-                if os.path.isfile(FI_FO):
-                    print("[{}] ".format(index) + colored("{}".format(FI_FO), "white")) #color for file instance
-                    counter += 1
-
-                #elif os.path.isdir(FI_FO):
-                    #print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
-                    #counter += 1
-            print("="*COL)
-            try:
-                exeindex = int(input("Enter file index [execute]: "))
-                exefile = LS_DIR[exeindex]
-                exe_dict = exefile.split('.')
-                exetype = str(exe_dict[1])
-                if exetype == "out":
-                    print("---------------------------------C{}--------------------------------")
-                    os.system("./{}".format(exefile))
-                elif exetype == "py":
-                    print("--------------------------------PYTHON------------------------------")
-                    os.system("python3 {}".format(exefile))
-                print("\n--------------------------------------------------------------------")
-
-            except KeyboardInterrupt:
-                print("File not executed")
-            except ValueError:
-                print("Enter Correctly\n")
-            except IndexError:
-                print("Enter Correctly\n")
-
-            __chdir(os.getcwd())
-
         elif (com.lower() == "?")or(com.lower() == "h"):
             print("\n[help]    = "+ colored("[?/h]", 'red') +"elp-"+ colored("[ed]", 'red') +"itsource")
             print("[walker]  = "+ colored("[g]", 'red') +"oto-" +colored("[p]", 'red') +"revious-"+ colored("[s]", 'red') +"earch")
             print("[utility] = "+ colored("[c]", 'red') +"lear-"+ colored("[t]", 'red') +"erminal-" +colored("[e]", 'red') +"xit-" +colored("[c]", 'red') +"lear")
             print("[writer]  = "+ colored("[n]", 'red') +"ewfile-" +colored("[d]", 'red') +"eletefile")
             print("[folder]  = "+ colored("[m]", 'red') +"akedir-" +colored("[r]", 'red') +"emovedir")
-            print("[builder] = "+ colored("[b]", 'red') +"uild-e" +colored("[x]", 'red') +"ecute")
             __chdir(CUR_DIR)
 
         elif com.lower() == "p":
