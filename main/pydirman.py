@@ -14,6 +14,7 @@ SYS_DIR = []
 for directory in os.listdir("/"):
     SYS_DIR.append(directory)
 
+##Argparse usage coming soon...
 if len(sys.argv) > 1:
     if sys.argv[1] == "--help" or sys.argv[1] == "-h":
         cprint("\nPython Directory Management", "red", attrs=['bold', 'underline'])
