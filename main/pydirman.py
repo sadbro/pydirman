@@ -40,8 +40,7 @@ LS_DIR = sorted(os.listdir())
 CUR_PATH = os.path.abspath(CUR_DIR)
 
 def test(file):
-    __file = file.split(".")
-    filename, file_type = __file
+    filename, file_type = file.split(".")
     command = str(input("Enter command [exit|test|nano] "))
     if command.lower() == "t":
         print("-"*COL)
