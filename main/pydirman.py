@@ -7,14 +7,13 @@ from termcolor import colored, cprint
 
 global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, COL
 TempC = "#include <stdio.h>\n\nint main(){\n\n    return 0;\n}"
-TempCpp = "#include <iospace>\n\nusing namespace std;\nint main(){\n\n    return 0;\n}"
-COL = os.get_terminal_size()[0]
+TempCpp = "#include <iostream>\n\nusing namespace std;\nint main(){\n\n    return 0;\n}"
+COL, LINE = os.get_terminal_size()
 
 SYS_DIR = []
 for directory in os.listdir("/"):
     SYS_DIR.append(directory)
 
-##Argparse usage coming soon...
 if len(sys.argv) > 1:
     if sys.argv[1] == "--help" or sys.argv[1] == "-h":
         cprint("\nPython Directory Management", "red", attrs=['bold', 'underline'])
@@ -29,8 +28,10 @@ if len(sys.argv) > 1:
             cprint("\nEnter a Directory path only!!", "red", attrs=['bold'])
             sys.exit(1)
         except FileNotFoundError:
-            cprint("Directory does not exist!!\n", "red", attrs=['bold'])
-            sys.exit(1)
+            NDIR= sys.argv[1]
+            os.system("mkdir {} && pydirman {}".format(NDIR, NDIR))
+            #cprint("Directory does not exist!!\n", "red", attrs=['bold'])
+            sys.exit(0)
 
 elif len(sys.argv):
     CUR_DIR = os.getcwd()
@@ -40,18 +41,33 @@ LS_DIR = sorted(os.listdir())
 CUR_PATH = os.path.abspath(CUR_DIR)
 
 def test(file):
-    filename, file_type = file.split(".")
+    __file = file.split(".")
+    filename, file_type = __file
     command = str(input("Enter command [exit|test|nano] "))
     if command.lower() == "t":
         print("-"*COL)
+
         if file_type == 'py':
             os.system("python3 {}".format(file))
+
         elif file_type == 'c':
             os.system("gcc {} -o {}.out && ./{}.out".format(file, filename, filename))
+
         elif file_type == 'cpp':
             os.system("g++ {} -o {}.out && ./{}.out".format(file, filename, filename))
+
+        elif file_type == 'js':
+            os.system("node {}".format(file))
+
+        elif file_type == 'java':
+            os.system("javac {} && java {}".format(file, filename))
+
         elif file_type == 'out':
             os.system("./{}".format(file))
+
+        elif file_type == 'class':
+            os.system("java {}".format(filename))
+
         print("-"*COL)
         test(file)
 
@@ -60,9 +76,7 @@ def test(file):
         test(file)
 
     elif command.lower() == "e":
-        os.system("clear")
-        __display()
-        __chdir(os.getcwd())
+        os.system("clear & pydirman {}".format(os.getcwd()))
 
 def __display():
 
@@ -111,7 +125,7 @@ def __chdir(CUR_DIR):
         com = str(input(colored("\npydirman", "blue", attrs=['underline']) +colored(">", "blue"))).strip()
         if com.lower() == "g":
 
-            try: 
+            try:
                 ask = input("Enter your index: ")
                 if ask.isdigit():
                     ask = int(ask)
@@ -131,9 +145,9 @@ def __chdir(CUR_DIR):
                             CUR_FILE = str(LS_DIR[ask])
 
                             if porr.lower() == "p":
-                                print(colored("\n" +"="*56 +"START"+ "="*56 +"\n", "red"))
+                                print(colored("\n" +"="*((COL-5)//2) +"START"+ "="*((COL-5)//2) +"\n", "red"))
                                 os.system("reader.out {}".format(CUR_FILE))
-                                print(colored("\n" +"="*57 +"END"+ "="*57+ "\n", "red"))
+                                print(colored("\n" +"="*((COL-3)//2) +"END"+ "="*((COL-3)//2)+ "\n", "red"))
                                 stat = str(input("[c]ontinue/[e]xit: "))
 
                                 if stat.lower() == "c":
@@ -152,7 +166,7 @@ def __chdir(CUR_DIR):
                                 __chdir(os.getcwd())
 
                             elif porr.lower() == "e":
-                                os.system("sudo gedit {} >/dev/null 2>&1".format(CUR_FILE))
+                                os.system("sudo nano {}".format(CUR_FILE))
                                 __chdir(os.getcwd())
 
                             else:
@@ -207,6 +221,7 @@ def __chdir(CUR_DIR):
             print("[utility] = "+ colored("[c]", 'red') +"lear-"+ colored("[t]", 'red') +"erminal-" +colored("[e]", 'red') +"xit-" +colored("[c]", 'red') +"lear")
             print("[writer]  = "+ colored("[n]", 'red') +"ewfile-" +colored("[d]", 'red') +"eletefile")
             print("[folder]  = "+ colored("[m]", 'red') +"akedir-" +colored("[r]", 'red') +"emovedir")
+            print("[builder] = "+ colored("[b]", 'red') +"uild-e" +colored("[x]", 'red') +"ecute")
             __chdir(CUR_DIR)
 
         elif com.lower() == "p":
@@ -254,19 +269,25 @@ def __chdir(CUR_DIR):
             try:
                 filename = str(input("Enter file name [create]: "))
                 os.system("touch {}".format(filename))
-                file_split = filename.split('.')
-                file_ext = file_split[1]
+                file_name ,file_ext = filename.split('.')
+                TempJava= "public class "+ file_name +" {\n\n    public static void main(String[] args){\n\n\n    }\n\n}\n"
+
                 if file_ext == 'c':
                     os.system('echo "{}" > {}'.format(TempC, filename))
+
                 elif file_ext == 'cpp':
                     os.system('echo "{}" > {}'.format(TempCpp, filename))
+
+                elif file_ext == 'java':
+                    os.system('echo "{}" > {}'.format(TempJava, filename))
+
                 os.system("sudo nano {}".format(filename))
                 os.system("sudo chmod 777 {}".format(filename))
                 #os.system("sudo python3 /etc/txted.py >/dev/null 2>&1")
-            except KeyboardInterrupt:
+            except:
                 print("File not created")
 
-            __chdir(os.getcwd())
+            os.system("clear && pydirman {}".format(CUR_DIR))
 
         elif com.lower() == "d":
             print("="*COL)
@@ -318,6 +339,7 @@ def __chdir(CUR_DIR):
                 dirname_rm = str(input("Enter directory name: ")).strip()
                 if dirname_rm in SYS_DIR:
                     print("You just tried to delete a system file!!")
+                    __chdir(os.getcwd())
                 os.system("rmdir {}".format(dirname_rm))
             except KeyboardInterrupt:
                 print("Directory not deleted")
