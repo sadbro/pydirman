@@ -278,9 +278,11 @@ def __chdir(CUR_DIR):
                 print("Sorry. your results returned no results. maybe you didn't enter the correct name.")
             __chdir(CUR_DIR)
 
-        elif com.lower() == "t": #  TERMINAL COMMAND
-            termDir = os.getcwd()
-            os.system("qterminal -w {} >/dev/null 2>&1".format(termDir))
+        elif com.startswith("t"): #  TERMINAL COMMAND
+            cmd= com[2:]
+            print("-"*COL + "\nExecuting [{}]...\n".format(colored(cmd, "green")) + "-"*COL)
+            os.system(cmd)
+            print("-"*COL)
             __chdir(os.getcwd())
 
         elif com.lower() == "n": #  NEW-FILE COMMAND
