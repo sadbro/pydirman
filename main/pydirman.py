@@ -12,9 +12,9 @@
 
 
 
-
 import os
 import sys
+import socket
 from time import sleep
 from termcolor import colored, cprint
 
@@ -95,6 +95,8 @@ def test(file):
 def __display():
 
     global COL
+
+    IP_ADDRESS= socket.gethostbyname(socket.gethostname())
     CUR_DIR = os.getcwd()
     LS_DIR = sorted(os.listdir())
     CUR_PATH = os.path.abspath(CUR_DIR)
@@ -131,7 +133,7 @@ def __chdir(CUR_DIR):
     '?', 'help', 'editsource', 'usb', 'open'
     'goto', 'previous', 'search',
     'update', 'terminal', 'exit', 'clear',
-    'newfile', 'deletefile',
+    'newfile', 'deletefile', 'searchfile',
     'makedir', 'removedir', 'test'
     ]
 
@@ -243,6 +245,21 @@ def __chdir(CUR_DIR):
             elif os.path.isdir(file):
                 print("Enter index of files only !!")
             __chdir(CUR_DIR)
+
+        elif com.startswith("s "): #  SEARCH EXTENSION COMMAND
+            ext= com[2:]
+            files= []
+            total_files_folders= len(os.listdir(os.getcwd()))
+            print("-"*COL)
+            for file in os.listdir(os.getcwd()):
+                if file.endswith(ext):
+                    files.append(file)
+            print(colored(f"OBJECTS SEARCHED: {total_files_folders}, OBJECTS FOUND: {len(files)}", "red", attrs=["bold"]))
+            print("-"*COL)
+            for file in files:
+                print(f"{file}")
+            print("-"*COL)
+            __chdir(os.getcwd())
 
         elif (com.lower() == "?")or(com.lower() == "h"): #  HELP COMMAND
             print("\n[help]      = "+ colored("[?/h]", 'red') +"elp-"+ colored("[ed]", 'red') +"itsource")
