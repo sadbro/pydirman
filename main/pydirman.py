@@ -15,6 +15,7 @@
 import os
 import sys
 import socket
+import subprocess as sp
 from time import sleep
 from termcolor import colored, cprint
 
@@ -68,6 +69,8 @@ def __hex(fp):
     print("\n"+ colored(hexd, "blue") +"\n")
 
 def test(file):
+
+    global COL
     __file = file.split(".")
     try:
         filename, file_type = __file
@@ -75,29 +78,34 @@ def test(file):
         filename= __file[0]
 
     command = str(input("Enter command [exit|test|nano|clear|hex] "))
-    if command.lower() == "t":
+    if command.startswith("t"):
+        args_list= command.split(" ")[1:]
+        args= ""
+        for arg in args_list:
+            args+= arg+" "
+
         print("-"*COL)
 
         if file_type == 'py':
-            os.system("python3 {}".format(file))
+            os.system("python3 {} {}".format(file, args).rstrip())
 
         elif file_type == 'c':
-            os.system("gcc {} -o {}.out && ./{}.out".format(file, filename, filename))
+            os.system("gcc {} -o {}.out && ./{}.out {}".format(file, filename, filename, args).rstrip())
 
         elif file_type == 'cpp':
-            os.system("g++ {} -o {}.out && ./{}.out".format(file, filename, filename))
+            os.system("g++ {} -o {}.out && ./{}.out {}".format(file, filename, filename, args).rstrip())
 
         elif file_type == 'js':
-            os.system("node {}".format(file))
+            os.system("node {} {}".format(file, args).rstrip())
 
         elif file_type == 'java':
-            os.system("javac {} && java {}".format(file, filename))
+            os.system("javac {} && java {} {}".format(file, filename, args).rstrip())
 
         elif file_type == 'out':
-            os.system("./{}".format(file))
+            os.system("./{} {}".format(file, args).rstrip())
 
         elif file_type == 'class':
-            os.system("java {}".format(filename))
+            os.system("java {} {}".format(filename, args).rstrip())
 
         print("-"*COL)
         test(file)
@@ -107,6 +115,7 @@ def test(file):
         test(file)
 
     elif command.lower() == "c":
+        COL= os.get_terminal_size()[0]
         os.system("clear")
         print("FILE -> {}\n".format(file))
         test(file)
@@ -269,7 +278,7 @@ def __chdir(CUR_DIR):
             __chdir(os.getcwd())
 
         elif com.lower() == "c": #  CLEAR/REFRESH COMMAND
-            os.system("clear && cd {}".format(CUR_DIR))
+            os.system("clear")
             __display()
             __chdir(CUR_DIR)
 
@@ -337,8 +346,9 @@ def __chdir(CUR_DIR):
 
         elif com.startswith("t"): #  TERMINAL COMMAND
             cmd= com[2:]
+            cmd_args= cmd.split(" ")
             print("-"*COL + "\nExecuting [{}]...\n".format(colored(cmd, "green")) + "-"*COL)
-            os.system(cmd)
+            sp.run(cmd_args)
             print("-"*COL)
             __chdir(os.getcwd())
 
