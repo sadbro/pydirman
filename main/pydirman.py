@@ -15,6 +15,7 @@
 import os
 import sys
 import socket
+import readline
 import subprocess as sp
 from time import sleep
 from termcolor import colored, cprint
@@ -257,6 +258,12 @@ def __chdir(CUR_DIR):
         elif com.lower() == "e": #  EXIT COMMAND
             print(colored("See you soon!\n", "white"))
             sys.exit(0)
+
+        elif com.lower() == "console": #  PYTHON CONSOLE
+            os.system("clear")
+            sp.run("python3")
+            __display()
+            __chdir(CUR_DIR)
 
         elif com.lower() == "o": #  OPEN-IN-GUI COMMAND
             os.system("nautilus {}".format(CUR_DIR))
