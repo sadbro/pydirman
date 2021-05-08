@@ -15,4 +15,4 @@ a Python script to manage your directories.
 >cd /pydirman/main && sudo python3 setup.py
 
 for any queries, drop a msg at my facebook below
---> www.facebook.com/prabaha.das.23
+--> https://www.facebook.com/codelogs
