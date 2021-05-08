@@ -14,7 +14,6 @@
 
 import os
 import sys
-import socket
 import readline
 import subprocess as sp
 from time import sleep
@@ -96,6 +95,9 @@ def test(file):
         elif file_type == 'cpp':
             os.system("g++ {} -o {}.out && ./{}.out {}".format(file, filename, filename, args).rstrip())
 
+        elif file_type == 'asm':
+            os.system("sudo nasm -f elf64 {} && sudo ld -o {}.out {}.o && sudo ./{}.out".format(file, filename, filename, filename))
+
         elif file_type == 'js':
             os.system("node {} {}".format(file, args).rstrip())
 
@@ -144,16 +146,16 @@ def __display():
     print(colored("\nPYTHON DIRECTORY MANAGEMENT\n", "red", attrs=['underline', 'bold']))
     print(colored("Directory", "yellow") +" | "+ colored("File", "white") +" | "+ colored("Size", "blue"))
     print("="*COL)
-    counter = 1
+    counter = 0
     for index,FI_FO in enumerate(LS_DIR):
         if os.path.isfile(FI_FO):
             name_length= len(str(counter))+ 3+ len(FI_FO)
             GAP= TAB-name_length
             file_size= convert_bytes(os.path.getsize(FI_FO))
-            print("[{}] ".format(index) + colored("{}".format(FI_FO), "white") + colored("-"*GAP +"{}".format(file_size), "blue")) #color for file instance
+            print("[{}] ".format(index) + colored("{}".format(FI_FO), "white") + colored("-"*GAP +"{}".format(file_size), "blue"))
             counter += 1
         elif os.path.isdir(FI_FO):
-            print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow")) #color for directory
+            print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow"))
             counter += 1
 
     print("="*COL)
@@ -298,21 +300,26 @@ def __chdir(CUR_DIR):
                 __chdir(CUR_DIR)
             else:
                 file_index = int(com[5:])
-                file = LS_DIR[file_index]
+                try:
+                    file = LS_DIR[file_index]
 
-                if os.path.isfile(file):
-                    os.system("clear")
-                    print("FILE -> {}\n".format(file))
-                    test(file)
+                    if os.path.isfile(file):
+                        os.system("clear")
+                        print("FILE -> {}\n".format(file))
+                        test(file)
 
-                elif os.path.isdir(file):
-                    print("Enter index of files only !!")
-                __chdir(CUR_DIR)
+                    elif os.path.isdir(file):
+                        print("Enter index of files only !!")
+                        __chdir(CUR_DIR)
+
+                except IndexError:
+                    print("Index {} not found".format(file_index))
+                    __chdir(CUR_DIR)
 
         elif (com.lower() == "?")or(com.lower() == "h"): #  HELP COMMAND
             print("\n[help]      = "+ colored("[?/h]", 'red') +"elp-"+ colored("[ed]", 'red') +"itsource")
             print("[walker]    = "+ colored("[g]", 'red') +"oto-" +colored("[p]", 'red') +"revious-"+ colored("[s]", 'red') +"earch")
-            print("[utility]   = "+ colored("[c]", 'red') +"lear-"+ colored("[t]", 'red') +"erminal-" +colored("[e]", 'red') +"xit-" +colored("[c]", 'red') +"lear")
+            print("[utility]   = "+ colored("[c]", 'red') +"lear-"+ colored("[t]", 'red') +"erminal-" +colored("[e]", 'red')+ "xit-" +colored("[c]", 'red') +"lear")
             print("[writer]    = "+ colored("[n]", 'red') +"ewfile-" +colored("[d]", 'red') +"eletefile")
             print("[folder]    = "+ colored("[m]", 'red') +"akedir-" +colored("[r]", 'red') +"emovedir")
             print("[misc]      = "+ colored("[u]", 'red') +"sb-"+ colored("[o]", 'red') +"pen")
@@ -330,11 +337,28 @@ def __chdir(CUR_DIR):
                 __chdir(CUR_DIR)
 
         elif com.startswith("s "): #  SEARCH COMMAND
-            search = com[2:]
+            args= com.split()
+            search = args[1]
+            try:
+                con= args[2]
+            except:
+                con= "-a"
             objects= []
             for object in LS_DIR:
                 if search in object:
-                    objects.append((object, LS_DIR.index(object)))
+                    if con == "-a":
+                        objects.append((object, LS_DIR.index(object)))
+                    elif con == "-f":
+                        if os.path.isfile(object):
+                            objects.append((object, LS_DIR.index(object)))
+                    elif con == "-d":
+                        if os.path.isdir(object):
+                            objects.append((object, LS_DIR.index(object)))
+                    else:
+                        print("Wrong argument: `{}`".format(con))
+                        print("\n[-a] for all(by default).\n[-f] for files only.\n[-d] for directory only.\n")
+                        break
+
             if len(objects) > 0:
                 print("-"*COL)
                 print(colored(f"OBJECTS SEARCHED: {len(LS_DIR)}, OBJECTS FOUND: {len(objects)}", "red", attrs=["bold"]))
@@ -348,10 +372,10 @@ def __chdir(CUR_DIR):
                 print("-"*COL)
 
             else:
-                print("Object not found!!!")
+                print("`{}` not found!!!".format(search))
             __chdir(CUR_DIR)
 
-        elif com.startswith("t"): #  TERMINAL COMMAND
+        elif com.startswith("t "): #  TERMINAL COMMAND
             cmd= com[2:]
             cmd_args= cmd.split(" ")
             print("-"*COL + "\nExecuting [{}]...\n".format(colored(cmd, "green")) + "-"*COL)
@@ -375,13 +399,14 @@ def __chdir(CUR_DIR):
                 elif file_ext == 'java':
                     os.system('echo "{}" > {}'.format(TempJava, filename))
 
-                os.system("sudo nano {}".format(filename))
                 os.system("sudo chmod 777 {}".format(filename))
 
             except:
                 print("File not created")
 
-            os.system("clear && pydirman {}".format(CUR_DIR))
+            os.system("clear")
+            __display()
+            __chdir(CUR_DIR)
 
         elif com.lower() == "d": #  DELETE-FILE COMMAND
             print("="*COL)
@@ -405,13 +430,15 @@ def __chdir(CUR_DIR):
 
             __chdir(os.getcwd())
 
-        elif com.lower() == "m": #  NEW-DIRECTORY COMMAND
+        elif com.startswith("m "): #  NEW-DIRECTORY COMMAND
             try:
-                dirname_mk = str(input("Enter Directory name: "))
+                dirname_mk = com.split(" ")[1]
                 os.system("mkdir {}".format(dirname_mk))
             except KeyboardInterrupt:
                 print("Directory not created!")
 
+            os.system("clear")
+            __display()
             __chdir(os.getcwd)
 
         elif com.lower() == "r": #  DELETE-DIRECTORY COMMAND
@@ -436,6 +463,8 @@ def __chdir(CUR_DIR):
             except IndexError:
                 print("Enter Correctly")
 
+            os.system("clear")
+            __display()
             __chdir(os.getcwd())
 
         elif com.lower() in __all__:
