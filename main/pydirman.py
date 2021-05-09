@@ -138,7 +138,6 @@ def __display():
 
     COL= os.get_terminal_size()[0]
     TAB= round((0.6*COL))
-    IP_ADDRESS= socket.gethostbyname(socket.gethostname())
     CUR_DIR = os.getcwd()
     LS_DIR = sorted(os.listdir())
     CUR_PATH = os.path.abspath(CUR_DIR)
