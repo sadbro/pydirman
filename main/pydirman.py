@@ -19,10 +19,23 @@ import subprocess as sp
 from time import sleep
 from termcolor import colored, cprint
 
-global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, COL
+global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, COL, browser
+app_path= "/usr/share/applications/defaults.list"
+browser_prefix="application/xhtml+xml"
 TempC = "#include <stdio.h>\n\nint main(){\n\n    return 0;\n}"
 TempCpp = "#include <iostream>\n\nusing namespace std;\nint main(){\n\n    return 0;\n}"
 COL, LINE = os.get_terminal_size()
+
+with open(app_path, "r") as file:
+    data= file.readlines()
+
+for d in data:
+    if d.startswith(browser_prefix):
+        browser= d.split("=")[1].split(".")[:-1][0]
+
+def green(text):
+
+    return colored(text, "green")
 
 SYS_DIR = []
 for directory in os.listdir("/"):
@@ -42,12 +55,10 @@ if len(sys.argv) > 1:
             cprint("\nEnter a Directory path only!!", "red", attrs=['bold'])
             sys.exit(1)
         except FileNotFoundError:
-            #NDIR= sys.argv[1]
-            #os.system("mkdir {} && pydirman {}".format(NDIR, NDIR))
             cprint("Directory does not exist!!\n", "red", attrs=['bold'])
             sys.exit(0)
 
-elif len(sys.argv):
+elif len(sys.argv) == 1:
     CUR_DIR = os.getcwd()
 
 CUR_DIR = os.getcwd()
@@ -70,7 +81,7 @@ def __hex(fp):
 
 def test(file):
 
-    global COL
+    global COL, browser
     __file = file.split(".")
     try:
         filename, file_type = __file
@@ -102,13 +113,16 @@ def test(file):
             os.system("node {} {}".format(file, args).rstrip())
 
         elif file_type == 'java':
-            os.system("javac {} && java {} {}".format(file, filename, args).rstrip())
+            os.system("javac {} && java {} {}".format(file, filename, args).strip())
 
         elif file_type == 'out':
             os.system("./{} {}".format(file, args).rstrip())
 
         elif file_type == 'class':
             os.system("java {} {}".format(filename, args).rstrip())
+
+        elif file_type == 'html':
+            os.system("{} {}".format(browser, file))
 
         print("-"*COL)
         test(file)
@@ -132,6 +146,10 @@ def test(file):
         __display()
         __chdir(os.getcwd())
 
+    else:
+        print("please enter a valid command")
+        test(file)
+
 def __display():
 
     global COL
@@ -143,24 +161,42 @@ def __display():
     CUR_PATH = os.path.abspath(CUR_DIR)
 
     print(colored("\nPYTHON DIRECTORY MANAGEMENT\n", "red", attrs=['underline', 'bold']))
-    print(colored("Directory", "yellow") +" | "+ colored("File", "white") +" | "+ colored("Size", "blue"))
-    print("="*COL)
+    gi= green(" | ")
+    print(colored("Directory", "yellow") + gi + colored("File", "white") + gi + colored("Misc", "red") + gi + colored("Size", "blue"))
+    print(green("="*COL))
+    fc = 0
+    dc = 0
+    misc= 0
     counter = 0
+    total_size = 0
     for index,FI_FO in enumerate(LS_DIR):
+        gin= green("[{}] ".format(index))
+        counter += 1
         if os.path.isfile(FI_FO):
+            fc += 1
             name_length= len(str(counter))+ 3+ len(FI_FO)
             GAP= TAB-name_length
             file_size= convert_bytes(os.path.getsize(FI_FO))
-            print("[{}] ".format(index) + colored("{}".format(FI_FO), "white") + colored("-"*GAP +"{}".format(file_size), "blue"))
-            counter += 1
-        elif os.path.isdir(FI_FO):
-            print("[{}] ".format(index) + colored("{}/".format(FI_FO), "yellow"))
-            counter += 1
+            total_size+= os.path.getsize(FI_FO)
+            print(gin + colored("{}".format(str(FI_FO)), "white") + colored("-"*GAP +"{}".format(file_size), "blue"))
 
-    print("="*COL)
-    print("TOTAL FILES/DIRECTORIES: "+ colored("{}".format(counter), "red", attrs=['bold']))
-    print("YOUR CURRENT LOCATION: "+ colored("{}".format(CUR_PATH), "red", attrs=['bold']))
-    print("="*COL)
+        elif os.path.isdir(FI_FO):
+            dc += 1
+            print(gin + colored("{}/".format(str(FI_FO)), "yellow"))
+
+        else:
+            print(gin + colored("{}".format(str(FI_FO)), "red"))
+            misc += 1
+
+    print(green("="*COL))
+    fcounter = colored("{}".format(fc), "white", attrs=['bold'])
+    dcounter = colored("{}".format(dc), "yellow", attrs=['bold'])
+    c = colored("{}".format(counter), "green", attrs=['bold'])
+    m = colored("{}".format(misc), "red", attrs=['bold'])
+    print("TOTAL FILES/DIRECTORIES: {} ({}/{}/{})".format(c, fcounter, dcounter, m))
+    print("YOUR CURRENT LOCATION: "+ colored("{}".format(CUR_PATH), "green", attrs=['bold']))
+    print("TOTAL SIZE HERE(files): "+ colored("{}".format(convert_bytes(total_size)), "green", attrs=['bold']))
+    print(green("="*COL))
     print("[help] = "+ colored("[?]", 'red'))
 
 def __chdir(CUR_DIR):
@@ -193,10 +229,10 @@ def __chdir(CUR_DIR):
                         print("I need a index here to work!")
                         __chdir(CUR_DIR)
                     else:
-                        ask= com[2:]
+                        ask= com.split(" ")[1]
 
                 if ask.isdigit():
-                    ask= int(ask)
+                    ask= eval(ask)
 
                     try:
                         if os.path.isdir(str(LS_DIR[ask])):
@@ -242,14 +278,17 @@ def __chdir(CUR_DIR):
                                 __chdir(os.getcwd())
 
                     except IndexError:
-                       print("oops, you entered a wrong number.")
-                       __chdir(os.getcwd())
+                        print("oops, you entered a wrong number.")
+                        __chdir(os.getcwd())
 
                 elif ask.isalpha():
                     print("Please enter index of the file :[")
                     print("[HINT] if you can't find the index then you can find it by typing [s] ;]")
                     __chdir(os.getcwd())
 
+                else:
+                    print("wait what?, what is this: {}".format(" ".join(com.split(" ")[1:])))
+                    __chdir(os.getcwd())
 
             except PermissionError:
                 cprint("\nThis directory is off limits!! Are you root?? I don't think so. BACK OFF!\n".upper(), "red", attrs=['bold'])
@@ -298,8 +337,8 @@ def __chdir(CUR_DIR):
                 print("I am hungry! Feed me indices.\n")
                 __chdir(CUR_DIR)
             else:
-                file_index = int(com[5:])
                 try:
+                    file_index = int(com[5:])
                     file = LS_DIR[file_index]
 
                     if os.path.isfile(file):
@@ -313,6 +352,10 @@ def __chdir(CUR_DIR):
 
                 except IndexError:
                     print("Index {} not found".format(file_index))
+                    __chdir(CUR_DIR)
+
+                except ValueError:
+                    print("Please enter a index!!")
                     __chdir(CUR_DIR)
 
         elif (com.lower() == "?")or(com.lower() == "h"): #  HELP COMMAND
@@ -371,16 +414,16 @@ def __chdir(CUR_DIR):
                 print("-"*COL)
 
             else:
-                print("`{}` not found!!!".format(search))
+                print("`{}` not found!!!".format(args[:]))
             __chdir(CUR_DIR)
 
         elif com.startswith("t "): #  TERMINAL COMMAND
             cmd= com[2:]
             cmd_args= cmd.split(" ")
             print("-"*COL + "\nExecuting [{}]...\n".format(colored(cmd, "green")) + "-"*COL)
-            sp.run(cmd_args)
+            os.system(cmd)
             print("-"*COL)
-            __chdir(os.getcwd())
+            __chdir(CUR_DIR)
 
         elif com.lower() == "n": #  NEW-FILE COMMAND
             try:
@@ -388,6 +431,8 @@ def __chdir(CUR_DIR):
                 os.system("touch {}".format(filename))
                 file_name ,file_ext = filename.split('.')
                 TempJava= "public class "+ file_name +" {\n\n    public static void main(String[] args){\n\n\n    }\n\n}\n"
+                ns= "__"+ file_name.upper() +"_H"
+                TempHPP= "#ifndef {}\n#define {}\n\n\n".format(ns, ns) + "class "+ file_name +" {\n\n};\n\n#endif"
 
                 if file_ext == 'c':
                     os.system('echo "{}" > {}'.format(TempC, filename))
@@ -397,6 +442,9 @@ def __chdir(CUR_DIR):
 
                 elif file_ext == 'java':
                     os.system('echo "{}" > {}'.format(TempJava, filename))
+
+                elif file_ext == 'hpp':
+                    os.system('echo "{}" > {}'.format(TempHPP, filename))
 
                 os.system("sudo chmod 777 {}".format(filename))
 
