@@ -19,11 +19,12 @@ import subprocess as sp
 from time import sleep
 from termcolor import colored, cprint
 
-global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, COL, browser
+global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
 app_path= "/usr/share/applications/defaults.list"
 browser_prefix="application/xhtml+xml"
-TempC = "#include <stdio.h>\n\nint main(){\n\n    return 0;\n}"
-TempCpp = "#include <iostream>\n\nusing namespace std;\nint main(){\n\n    return 0;\n}"
+TempC= "#include <stdio.h>\n\nint main(){\n\n\treturn 0;\n}"
+TempCpp= "#include <iostream>\n\nusing namespace std;\nint main(){\n\n\treturn 0;\n}"
+TempHTML= "<!DOCTYPE html>\n<html>\n\t<head>\n\t\t<title></title>\n\t</head>\n\t<body>\n\n\t</body>\n</html>"
 COL, LINE = os.get_terminal_size()
 
 with open(app_path, "r") as file:
@@ -113,7 +114,7 @@ def test(file):
             os.system("node {} {}".format(file, args).rstrip())
 
         elif file_type == 'java':
-            os.system("javac {} && java {} {}".format(file, filename, args).strip())
+            os.system("javac -Xlint:unchecked {} && java {} {}".format(file, filename, args).strip())
 
         elif file_type == 'out':
             os.system("./{} {}".format(file, args).rstrip())
@@ -201,7 +202,7 @@ def __display():
 
 def __chdir(CUR_DIR):
 
-    global TempC, TempCpp, COL
+    global TempC, TempCpp, TempHTML, COL
     CUR_DIR = os.getcwd()
     LS_DIR = sorted(os.listdir())
     SEARCH_DIR = []
@@ -430,7 +431,7 @@ def __chdir(CUR_DIR):
                 filename = str(input("Enter file name [create]: "))
                 os.system("touch {}".format(filename))
                 file_name ,file_ext = filename.split('.')
-                TempJava= "public class "+ file_name +" {\n\n    public static void main(String[] args){\n\n\n    }\n\n}\n"
+                TempJava= "public class "+ file_name +" {\n\n\tpublic static void main(String[] args){\n\n\n\t}\n\n}\n"
                 ns= "__"+ file_name.upper() +"_H"
                 TempHPP= "#ifndef {}\n#define {}\n\n\n".format(ns, ns) + "class "+ file_name +" {\n\n};\n\n#endif"
 
@@ -445,6 +446,9 @@ def __chdir(CUR_DIR):
 
                 elif file_ext == 'hpp':
                     os.system('echo "{}" > {}'.format(TempHPP, filename))
+
+                elif file_ext == 'html':
+                    os.system('echo "{}" > {}'.format(TempHTML, filename))
 
                 os.system("sudo chmod 777 {}".format(filename))
 
