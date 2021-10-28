@@ -1,4 +1,4 @@
-# pydirman
+# PYDIRMAN
 
     #######    ##       ##   ##########     ########   #######    ##        ###         ###         ###     ##  
     ##    ##    ##     ##    ##      ###       ##      ##    ##   ####     ####        ## ##        ####    ##  
@@ -9,7 +9,7 @@
     ##             ##        ##########     ########   ##   ###   ##         ##   ##           ##   ##     ###  
 
 
-a Python script to manage your directories.
+A Python script to manage your directories. \
 (Only for linux systems)
 ## Getting Started
 ```
