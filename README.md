@@ -15,6 +15,7 @@ A Python script to manage your directories. \
 ```
 cd /pydirman/main
 sudo python setup.py
+sudo pydirman
 ```
 
 ## Cont@ct
