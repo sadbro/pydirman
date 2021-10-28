@@ -19,5 +19,5 @@ sudo python setup.py
 
 ## Cont@ct
 
-Facebook --> www.facebook.com/codelogs\
-Google   --> sadbro.linux@gmail.com
+Facebook www.facebook.com/codelogs \
+Google   sadbro.linux@gmail.com
