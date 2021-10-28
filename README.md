@@ -13,11 +13,11 @@ a Python script to manage your directories.
 (Only for linux systems)
 ## Getting Started
 ```
-$ cd /pydirman/main
-$ sudo python3 setup.py
+cd /pydirman/main
+sudo python setup.py
 ```
 
 ## Cont@ct
 
-Facebook --> www.facebook.com/codelogs
+Facebook --> www.facebook.com/codelogs \n
 Google   --> sadbro.linux@gmail.com
