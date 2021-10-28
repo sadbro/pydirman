@@ -17,7 +17,7 @@ $ cd /pydirman/main
 $ sudo python3 setup.py
 ```
 
-## Contact@
+## Cont@ct
 
->Facebook --> www.facebook.com/codelogs
->Google   --> sadbro.linux@gmail.com
+Facebook --> www.facebook.com/codelogs
+Google   --> sadbro.linux@gmail.com
