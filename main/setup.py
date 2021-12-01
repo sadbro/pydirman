@@ -5,7 +5,7 @@ import os
 os.chdir('.')
 
 require = ['termcolor', 'pip']
-os_require = ['gcc', 'g++', 'nodejs', 'default-jdk']
+os_require = ['nodejs', 'default-jdk']
 PATH = os.path.realpath('.')
 docs = sorted(os.listdir(PATH))
 
