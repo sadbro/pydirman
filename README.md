@@ -10,7 +10,7 @@
 
 
 A Python script to manage your directories. \
-(Only for linux systems)
+(Only for unix systems)
 ## Getting Started
 ```
 cd /pydirman/main
