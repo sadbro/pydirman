@@ -19,20 +19,11 @@ import subprocess as sp
 from time import sleep
 from termcolor import colored, cprint
 
-global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
-app_path= "/usr/share/applications/defaults.list"
-browser_prefix="application/xhtml+xml"
+global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL
 TempC= "#include <stdio.h>\n\nint main(){\n\n\treturn 0;\n}"
 TempCpp= "#include <iostream>\n\nusing namespace std;\nint main(){\n\n\treturn 0;\n}"
 TempHTML= "<!DOCTYPE html>\n<html>\n\t<head>\n\t\t<title></title>\n\t</head>\n\t<body>\n\n\t</body>\n</html>"
 COL, LINE = os.get_terminal_size()
-
-with open(app_path, "r") as file:
-    data= file.readlines()
-
-for d in data:
-    if d.startswith(browser_prefix):
-        browser= d.split("=")[1].split(".")[:-1][0]
 
 def green(text):
 
@@ -79,8 +70,8 @@ def __hex(fp):
 
     hexd= content.hex(sep= ' ')
     print("\n"+ colored(hexd, "blue") +"\n")
-
-def test(file):
+        
+def test(file, cc=""):
 
     global COL, browser
     __file = file.split(".")
@@ -89,23 +80,22 @@ def test(file):
     except:
         filename= __file[0]
 
-    command = str(input("Enter command [exit|test|nano|clear|hex] "))
+    command = str(input("Enter command [exit|test|nano|clear|hex|custom-compile|get-custom-args] "))
     if command.startswith("t"):
-        args_list= command.split(" ")[1:]
-        args= ""
-        for arg in args_list:
-            args+= arg+" "
+        args= " ".join(command.split(" ")[1:])
 
+        print("-"*COL)
+        print("Custom Args: {}".format(cc))
         print("-"*COL)
 
         if file_type == 'py':
             os.system("python3 {} {}".format(file, args).rstrip())
 
         elif file_type == 'c':
-            os.system("gcc {} -o {}.out && ./{}.out {}".format(file, filename, filename, args).rstrip())
+            os.system("gcc {} {} -o {}.out && ./{}.out {}".format(file, cc, filename, filename, args).rstrip())
 
         elif file_type == 'cpp':
-            os.system("g++ {} -o {}.out && ./{}.out {}".format(file, filename, filename, args).rstrip())
+            os.system("g++ {} {} -o {}.out && ./{}.out {}".format(file, cc, filename, filename, args).rstrip())
 
         elif file_type == 'asm':
             os.system("sudo nasm -f elf64 {} && sudo ld -o {}.out {}.o && sudo ./{}.out".format(file, filename, filename, filename))
@@ -116,40 +106,55 @@ def test(file):
         elif file_type == 'java':
             os.system("javac -Xlint:unchecked {} && java {} {}".format(file, filename, args).strip())
 
-        elif file_type == 'out':
-            os.system("./{} {}".format(file, args).rstrip())
+        elif file_type == 'out' or file_type == 'sh':
+            try:
+                os.system("./{} {}".format(file, args).rstrip())
+            except:
+                os.system("chmod +x {}".format(file))
 
         elif file_type == 'class':
             os.system("java {} {}".format(filename, args).rstrip())
 
         elif file_type == 'html':
-            os.system("{} {}".format(browser, file))
+            print("WORK IN PROGRESS")
+            print("please use graphically.")
 
+        print()
         print("-"*COL)
-        test(file)
+        test(file, cc)
 
     elif command.lower() == "n":
         os.system("sudo nano {}".format(file))
-        test(file)
+        test(file, cc)
 
     elif command.lower() == "c":
         COL= os.get_terminal_size()[0]
         os.system("clear")
         print("FILE -> {}\n".format(file))
-        test(file)
+        test(file, cc)
 
     elif command.lower() == "h":
         __hex(file)
-        test(file)
+        test(file, cc)
 
     elif command.lower() == "e":
         os.system("clear")
         __display()
         __chdir(os.getcwd())
 
+    elif command.lower() == "cc":
+        cc= input("Enter custom args: ")
+        test(file, cc)
+
+    elif command.lower() == "gc":
+        print("-"*COL)
+        print("custom args: {}".format(cc))
+        print("-"*COL)
+        test(file, cc)
+
     else:
         print("please enter a valid command")
-        test(file)
+        test(file, cc)
 
 def __display():
 
@@ -335,7 +340,7 @@ def __chdir(CUR_DIR):
             LS_DIR = sorted(os.listdir())
 
             if len(com) == 4:
-                print("I am hungry! Feed me indices.\n")
+                print("I am hungry! Feed me indices.")
                 __chdir(CUR_DIR)
             else:
                 try:
@@ -343,9 +348,10 @@ def __chdir(CUR_DIR):
                     file = LS_DIR[file_index]
 
                     if os.path.isfile(file):
+                        custom= input("Enter custom args: ")
                         os.system("clear")
                         print("FILE -> {}\n".format(file))
-                        test(file)
+                        test(file, custom)
 
                     elif os.path.isdir(file):
                         print("Enter index of files only !!")
