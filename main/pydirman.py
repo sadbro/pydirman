@@ -21,7 +21,7 @@ from termcolor import colored, cprint
 global profile, CONFIG, CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
 app_path= "/usr/share/applications/defaults.list"
 browser_prefix="application/xhtml+xml"
-TempC= "#include <stdio.h>\n\nint main(){\n\n\treturn 0;\n}"
+TempC= "#include <stdio.h>\n#include <stdlib.h>\n\nint main(){\n\n\treturn 0;\n}"
 TempCpp= "#include <iostream>\n\nusing namespace std;\nint main(){\n\n\treturn 0;\n}"
 TempHTML= '<!DOCTYPE html>\n<html lang="en">\n\t<head>\n\t\t<meta charset="UTF-8">\n\t\t<meta name="viewport" content="width=device-width,initial-scale=1.0>"\n\t\t<title></title>\n\t</head>\n\t<body>\n\n\t</body>\n</html>'
 COL, LINE = os.get_terminal_size()
@@ -63,7 +63,7 @@ def custom(fp):
 
     global profile
     os.system("clear")
-    cmd= input("Get Profile? [New/Load] ")
+    cmd= input("Get Profile? [New/Load/{press Enter to skip}] ")
     if cmd.lower() == "n":
         context= input("Enter Profile Context: ")
         profile= input("Enter Profile: ")
@@ -79,6 +79,9 @@ def custom(fp):
 
         except:
             print("No Profile Found with name `{}`\n".format(context))
+
+    elif cmd.lower() is None:
+        profile= ""
 
     else:
         print("Invalid Command: `{}`".format(cmd))
@@ -155,7 +158,11 @@ def test(file, cc=""):
         args= " ".join(command.split(" ")[1:])
 
         print("="*COL)
-        print("profile: {}".format(cc))
+        if profile != "":
+            print("profile: {}".format(cc))
+        else:
+            print("No profiles detected!")
+
         print("-"*COL)
 
         if file_type == 'py':
@@ -416,7 +423,7 @@ def __chdir(CUR_DIR):
 
                         os.system("clear")
                         print("FILE -> {}\n".format(file))
-                        test(file, str(profile))
+                        test(file, profile)
 
                     elif os.path.isdir(file):
                         print("Enter index of files only !!")
