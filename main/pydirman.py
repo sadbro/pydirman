@@ -11,7 +11,6 @@
         ##             ##        ##########     ########   ##   ###   ##         ##   ##           ##   ##     ###
 
 
-
 import os
 import sys
 import readline
@@ -19,15 +18,70 @@ import subprocess as sp
 from time import sleep
 from termcolor import colored, cprint
 
-global CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL
+global profile, CONFIG, CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
+app_path= "/usr/share/applications/defaults.list"
+browser_prefix="application/xhtml+xml"
 TempC= "#include <stdio.h>\n\nint main(){\n\n\treturn 0;\n}"
 TempCpp= "#include <iostream>\n\nusing namespace std;\nint main(){\n\n\treturn 0;\n}"
-TempHTML= "<!DOCTYPE html>\n<html>\n\t<head>\n\t\t<title></title>\n\t</head>\n\t<body>\n\n\t</body>\n</html>"
+TempHTML= '<!DOCTYPE html>\n<html lang="en">\n\t<head>\n\t\t<meta charset="UTF-8">\n\t\t<meta name="viewport" content="width=device-width,initial-scale=1.0>"\n\t\t<title></title>\n\t</head>\n\t<body>\n\n\t</body>\n</html>'
 COL, LINE = os.get_terminal_size()
+CONFIG= "/.pydirman.config"
+profile= ""
+
+try:
+    with open(CONFIG, "x") as f:
+        pass
+except:
+    pass
 
 def green(text):
 
     return colored(text, "green")
+
+def log(cmd, ctx):
+
+    global CONFIG
+
+    with open(CONFIG, "a") as f:
+        f.write("[{}] {}\n".format(ctx, cmd))
+
+def load(ctx):
+
+    global CONFIG
+
+    with open(CONFIG, "r") as f:
+        lines= f.readlines()
+
+    for line in lines:
+        context= line.split(" ")[0][1:-1]
+        if context == ctx:
+            return " ".join(line.split(" ")[1:]).rstrip("\n")
+
+    return ""
+
+def custom(fp):
+
+    global profile
+    os.system("clear")
+    cmd= input("Get Profile? [New/Load] ")
+    if cmd.lower() == "n":
+        context= input("Enter Profile Context: ")
+        profile= input("Enter Profile: ")
+        log(profile, context)
+        print("Successfully Saved Custom Profile `{}`\n".format(context))
+
+    elif cmd.lower() == "l":
+        print_profiles()
+        context= input("Enter Profile Context: ")
+        try:
+            profile= load(context)
+            print("Successfully Loaded Custom Profile `{}`\n".format(context))
+
+        except:
+            print("No Profile Found with name `{}`\n".format(context))
+
+    else:
+        print("Invalid Command: `{}`".format(cmd))
 
 SYS_DIR = []
 for directory in os.listdir("/"):
@@ -70,22 +124,38 @@ def __hex(fp):
 
     hexd= content.hex(sep= ' ')
     print("\n"+ colored(hexd, "blue") +"\n")
-        
+
+def print_profiles():
+
+    global CONFIG, profile, COL
+
+    with open(CONFIG, "r") as f:
+        data= f.readlines()
+
+    print("-"*COL)
+    for line in data:
+        context= line.split(" ")[0]
+        profile= " ".join(line.split(" ")[1:]).rstrip("\n")
+
+        print("CONTEXT{}: `{}`".format(context, profile))
+
+    print("-"*COL)
+
 def test(file, cc=""):
 
-    global COL, browser
+    global COL, browser, CONFIG, profile
     __file = file.split(".")
     try:
         filename, file_type = __file
     except:
         filename= __file[0]
 
-    command = str(input("Enter command [exit|test|nano|clear|hex|custom-compile|get-custom-args] "))
+    command = str(input("Enter command [exit|test|nano|clear|hex] "))
     if command.startswith("t"):
         args= " ".join(command.split(" ")[1:])
 
-        print("-"*COL)
-        print("Custom Args: {}".format(cc))
+        print("="*COL)
+        print("profile: {}".format(cc))
         print("-"*COL)
 
         if file_type == 'py':
@@ -120,7 +190,7 @@ def test(file, cc=""):
             print("please use graphically.")
 
         print()
-        print("-"*COL)
+        print("="*COL)
         test(file, cc)
 
     elif command.lower() == "n":
@@ -143,12 +213,14 @@ def test(file, cc=""):
         __chdir(os.getcwd())
 
     elif command.lower() == "cc":
-        cc= input("Enter custom args: ")
-        test(file, cc)
+        os.system("sudo nano /.pydirman.config")
+        print_profiles()
+        profile= load(input("Enter Profile Context: "))
+        test(file, profile)
 
     elif command.lower() == "gc":
         print("-"*COL)
-        print("custom args: {}".format(cc))
+        print("profile: {}".format(cc))
         print("-"*COL)
         test(file, cc)
 
@@ -168,7 +240,7 @@ def __display():
 
     print(colored("\nPYTHON DIRECTORY MANAGEMENT\n", "red", attrs=['underline', 'bold']))
     gi= green(" | ")
-    print(colored("Directory", "yellow") + gi + colored("File", "white") + gi + colored("Misc", "red") + gi + colored("Size", "blue"))
+    print(colored("Directory", "yellow") + gi + colored("File", "white") + gi + colored("Error", "red"))
     print(green("="*COL))
     fc = 0
     dc = 0
@@ -258,26 +330,13 @@ def __chdir(CUR_DIR):
                                 print(colored("\n" +"="*((COL-5)//2) +"START"+ "="*((COL-5)//2) +"\n", "red"))
                                 os.system("reader.out {}".format(CUR_FILE))
                                 print(colored("\n" +"="*((COL-3)//2) +"END"+ "="*((COL-3)//2)+ "\n", "red"))
-                                stat = str(input("[c]ontinue/[e]xit: "))
-
-                                if stat.lower() == "c":
-                                    __display()
-                                    __chdir(CUR_DIR)
-
-                                elif stat.lower() == "e":
-                                    print(colored("See you soon!", "white"))
-                                    sys.exit(0)
-
-                                else:
-                                    print("Enter a valid command!")
-                                    __chdir(os.getcwd())
+                                __chdir(os.getcwd())
 
                             elif porr.lower() == "c":
                                 __chdir(os.getcwd())
 
                             elif porr.lower() == "e":
-                                os.system("sudo nano {}".format(CUR_FILE))
-                                __chdir(os.getcwd())
+                                sys.exit(0)
 
                             else:
                                 print("Enter a valid command")
@@ -344,14 +403,20 @@ def __chdir(CUR_DIR):
                 __chdir(CUR_DIR)
             else:
                 try:
+                    global profile
                     file_index = int(com[5:])
                     file = LS_DIR[file_index]
+                    ext= file.split(".")[1]
+                    CUSTOMISABLE= ["c", "cpp"]
 
                     if os.path.isfile(file):
-                        custom= input("Enter custom args: ")
+
+                        if ext in CUSTOMISABLE:
+                            custom(file)
+
                         os.system("clear")
                         print("FILE -> {}\n".format(file))
-                        test(file, custom)
+                        test(file, str(profile))
 
                     elif os.path.isdir(file):
                         print("Enter index of files only !!")
@@ -442,19 +507,24 @@ def __chdir(CUR_DIR):
                 TempHPP= "#ifndef {}\n#define {}\n\n\n".format(ns, ns) + "class "+ file_name +" {\n\n};\n\n#endif"
 
                 if file_ext == 'c':
-                    os.system('echo "{}" > {}'.format(TempC, filename))
+                    with open(filename, "w") as f:
+                        f.write(TempC)
 
                 elif file_ext == 'cpp':
-                    os.system('echo "{}" > {}'.format(TempCpp, filename))
+                    with open(filename, "w") as f:
+                        f.write(TempCpp)
 
                 elif file_ext == 'java':
-                    os.system('echo "{}" > {}'.format(TempJava, filename))
+                    with open(filename, "w") as f:
+                        f.write(TempJava)
 
                 elif file_ext == 'hpp':
-                    os.system('echo "{}" > {}'.format(TempHPP, filename))
+                    with open(filename, "w") as f:
+                        f.write(TempHPP)
 
                 elif file_ext == 'html':
-                    os.system('echo "{}" > {}'.format(TempHTML, filename))
+                    with open(filename, "w") as f:
+                        f.write(TempHTML)
 
                 os.system("sudo chmod 777 {}".format(filename))
 
