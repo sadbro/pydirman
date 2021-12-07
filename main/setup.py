@@ -16,7 +16,7 @@ for package in require:
         os.system('sudo apt install python3-{}'.format(package))
 
 for os_package in os_require:
-    os.system('sudo apt install {} -i'.format(os_package))
+    os.system('sudo apt install {}'.format(os_package))
 
 def fixer(cmd, ind):
     os.system('sudo chmod {} {}'.format(ind, cmd))
