@@ -378,7 +378,17 @@ def __chdir(CUR_DIR):
             __chdir(CUR_DIR)
 
         elif com.lower() == "o": #  OPEN-IN-GUI COMMAND
-            os.system("nautilus {}".format(CUR_DIR))
+
+            edited = 0
+            char_set = "!@#$%^&*()"
+            path = CUR_DIR
+            for i, j in enumerate(path):
+                if j in char_set:
+                    path = path[:i+edited] + "\\" + path[i+edited:]
+                    edited += 1
+
+            print("[PATH]: {}".format(path))
+            os.system("nautilus {}".format(path))
             __chdir(CUR_DIR)
 
         elif com.lower() == "u": #  USB COMMAND
