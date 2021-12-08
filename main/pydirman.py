@@ -19,8 +19,6 @@ from time import sleep
 from termcolor import colored, cprint
 
 global profile, CONFIG, CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
-app_path= "/usr/share/applications/defaults.list"
-browser_prefix="application/xhtml+xml"
 TempC= "#include <stdio.h>\n#include <stdlib.h>\n\nint main(){\n\n\treturn 0;\n}"
 TempCpp= "#include <iostream>\n\nusing namespace std;\nint main(){\n\n\treturn 0;\n}"
 TempHTML= '<!DOCTYPE html>\n<html lang="en">\n\t<head>\n\t\t<meta charset="UTF-8">\n\t\t<meta name="viewport" content="width=device-width,initial-scale=1.0>"\n\t\t<title></title>\n\t</head>\n\t<body>\n\n\t</body>\n</html>'
