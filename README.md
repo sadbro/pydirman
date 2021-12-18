@@ -1,4 +1,4 @@
-# pydirman
+# PYDIRMAN
 
     #######    ##       ##   ##########     ########   #######    ##        ###         ###         ###     ##  
     ##    ##    ##     ##    ##      ###       ##      ##    ##   ####     ####        ## ##        ####    ##  
@@ -9,10 +9,16 @@
     ##             ##        ##########     ########   ##   ###   ##         ##   ##           ##   ##     ###  
 
 
-a Python script to manage your directories.
-(Only for linux systems)
+A Python script to manage your directories. \
+(Only for unix systems)
+## Getting Started
+```
+cd /pydirman/main
+sudo python setup.py
+sudo pydirman
+```
 
->cd /pydirman/main && sudo python3 setup.py
+## Cont@ct
 
-for any queries, drop a msg at my facebook below
---> https://www.facebook.com/codelogs
+Facebook www.facebook.com/codelogs \
+Google   sadbro.linux@gmail.com
