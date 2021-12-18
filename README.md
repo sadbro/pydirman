@@ -18,7 +18,7 @@ sudo python setup.py
 sudo pydirman
 ```
 
-## Cont@ct
+## Contact
 
 Facebook www.facebook.com/codelogs \
 Google   sadbro.linux@gmail.com
