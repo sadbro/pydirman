@@ -21,6 +21,6 @@ sudo pydirman
 ## Contact
 
 <pre>
-Facebook www.facebook.com/codelogs \
+Facebook www.facebook.com/codelogs
 Google   sadbro.linux@gmail.com
 </pre>
