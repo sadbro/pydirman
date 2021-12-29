@@ -20,7 +20,7 @@ sudo pydirman
 
 ## Contact Us
 
-[Facebook](www.facebook.com/codelogs)
+[Facebook](https://www.facebook.com/codelogs)
 <br>
 [Google](mailto:sadbro.linux@gmail.com)
 <br>
