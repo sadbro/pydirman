@@ -25,4 +25,4 @@ sudo pydirman
 <br>
 [Google](mailto:sadbro.linux@gmail.com)
 <br>
-[Github Wiki](https://github.com/sadbro/pydirman.wiki.git)
+[Github Wiki](https://github.com/sadbro/pydirman/wiki)
