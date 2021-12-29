@@ -18,10 +18,11 @@ sudo python setup.py
 sudo pydirman
 ```
 
-## Contact Us
+## Go To
 
 
 [Facebook](www.facebook.com/codelogs)
 <br>
 [Google](mailto:sadbro.linux@gmail.com)
-
+<br>
+[Github Wiki](https://github.com/sadbro/pydirman.wiki.git)
