@@ -18,6 +18,8 @@ import subprocess as sp
 from time import sleep
 from termcolor import colored, cprint
 
+## GLOBAL VARS USED... PLEASE DON'T HATE ME, I AM AN IDIOT.
+
 global profile, CONFIG, CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
 TempC= "#include <stdio.h>\n#include <stdlib.h>\n\nint main(){\n\n\treturn 0;\n}"
 TempCpp= "#include <iostream>\n\nusing namespace std;\nint main(){\n\n\treturn 0;\n}"
@@ -191,8 +193,7 @@ def test(file, cc=""):
             os.system("java {} {}".format(filename, args).rstrip())
 
         elif file_type == 'html':
-            print("WORK IN PROGRESS")
-            print("please use graphically.")
+            os.system("python3 -m http.server 8080 --directory {}".format(CUR_DIR))
 
         print()
         print("="*COL)
@@ -282,6 +283,20 @@ def __display():
     print(green("="*COL))
     print("[help] = "+ colored("[?]", 'red'))
 
+def parse_cmd(ss, lsd):
+
+    cc = ss.split()
+    res = []
+    for index, obj in enumerate(cc):
+        if obj.startswith("$"):
+            ref = str(lsd.index(obj[1:]))
+        else:
+            ref = obj
+
+        res.append(ref)
+
+    return " ".join(res)
+
 def __chdir(CUR_DIR):
 
     global TempC, TempCpp, TempHTML, COL
@@ -304,6 +319,8 @@ def __chdir(CUR_DIR):
         com = str(input(colored("\npydirman", "blue", attrs=['underline']) +colored(">", "blue"))).strip()
         if com.startswith("g"): #  GOTO COMMAND
 
+            com = parse_cmd(com, LS_DIR)
+            print("[COM] {}".format(com))
             try:
                 if len(os.listdir(os.getcwd()))==1:
                     ask= "0"
@@ -418,6 +435,7 @@ def __chdir(CUR_DIR):
                 __chdir(CUR_DIR)
             else:
                 try:
+                    com = parse_cmd(com, LS_DIR)
                     global profile
                     file_index = int(com[5:])
                     file = LS_DIR[file_index]
@@ -505,6 +523,7 @@ def __chdir(CUR_DIR):
             __chdir(CUR_DIR)
 
         elif com.startswith("t "): #  TERMINAL COMMAND
+            com = parse_cmd(com, LS_DIR)
             cmd= com[2:]
             cmd_args= cmd.split(" ")
             print("-"*COL + "\nExecuting [{}]...\n".format(colored(cmd, "green")) + "-"*COL)
