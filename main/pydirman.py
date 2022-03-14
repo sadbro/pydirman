@@ -26,6 +26,7 @@ TempCpp= "#include <iostream>\n\nusing namespace std;\nint main(){\n\n\treturn 0
 TempHTML= '<!DOCTYPE html>\n<html lang="en">\n\t<head>\n\t\t<meta charset="UTF-8">\n\t\t<meta name="viewport" content="width=device-width,initial-scale=1.0>"\n\t\t<title></title>\n\t</head>\n\t<body>\n\n\t</body>\n</html>'
 COL, LINE = os.get_terminal_size()
 CONFIG= "/.pydirman.config"
+NANORC="/etc/nanorc"
 profile= ""
 
 try:
@@ -226,9 +227,19 @@ def test(file, cc=""):
 
     elif command.lower() == "gc":
         print("-"*COL)
-        print("profile: {}".format(cc))
+        if (cc != ""):
+            print("profile: {}".format(cc))
+        else:
+            print("No profiles detected.\n")
+
         print("-"*COL)
         test(file, cc)
+
+    elif command.lower() == "rc":
+        print("-"*COL)
+        print("Removing context... `{}`\n".format(cc))
+        print("-"*COL)
+        test(file)
 
     else:
         print("please enter a valid command")
@@ -288,10 +299,44 @@ def parse_cmd(ss, lsd):
     cc = ss.split()
     res = []
     for index, obj in enumerate(cc):
+
+        try:
+            eoc = obj.index("^")
+        except:
+            eoc = None
+
         if obj.startswith("$"):
-            ref = str(lsd.index(obj[1:]))
+
+            if "^" in obj:
+                ref = "'{}'{}".format(str(lsd.index(obj[1:eoc])), obj[eoc +1:])
+
+                try:
+                    ref = eval(ref)
+                except:
+                    print("An error has occured parsing the command: `{}`".format(ref))
+
+            else:
+                ref = str(lsd.index(obj[1:]))
+
+        elif obj.startswith("&"):
+
+            if "^" in obj:
+                ref = "'{}'{}".format(str(lsd[int(obj[1:eoc])]), obj[eoc +1:])
+
+                try:
+                    ref = eval(ref)
+                except:
+                    print("An error has occured parsing the command: `{}`".format(ref))
+
+            else:
+                ref = str(lsd[int(obj[1:])])
+
         else:
             ref = obj
+
+        if not isinstance(ref, str):
+            print("An generic error has occured parsing the command...")
+            return None
 
         res.append(ref)
 
@@ -417,8 +462,12 @@ def __chdir(CUR_DIR):
             __display()
             __chdir(CUR_DIR)
 
-        elif com.lower() == "ed":
+        elif com.lower() == "ed": # SOURCE CODE ACCESS
             os.system("sudo nano {} ".format(SOURCE_FILE_PATH))
+            __chdir(os.getcwd())
+
+        elif com.lower() == "edn": # SOURCE CODE ACCESS
+            os.system("sudo nano {} ".format(NANORC))
             __chdir(os.getcwd())
 
         elif com.lower() == "c": #  CLEAR/REFRESH COMMAND
@@ -524,11 +573,13 @@ def __chdir(CUR_DIR):
 
         elif com.startswith("t "): #  TERMINAL COMMAND
             com = parse_cmd(com, LS_DIR)
-            cmd= com[2:]
-            cmd_args= cmd.split(" ")
-            print("-"*COL + "\nExecuting [{}]...\n".format(colored(cmd, "green")) + "-"*COL)
-            os.system(cmd)
-            print("-"*COL)
+            if com is not None:
+                cmd= com[2:]
+                cmd_args= cmd.split(" ")
+                print("-"*COL + "\nExecuting [{}]...\n".format(colored(cmd, "green")) + "-"*COL)
+                os.system(cmd)
+                print("-"*COL)
+
             __chdir(CUR_DIR)
 
         elif com.lower() == "n": #  NEW-FILE COMMAND
