@@ -325,3 +325,52 @@ It will open the context file and it enables you to edit or add profiles.
 > Adding profiles should be done with proper syntax given in the profiling wiki.
 
 ---
+# SPECIAL COMMANDS <br>
+[that will make your life easier...] ;)
+
+## `ED`
+This stands for "edit-source". It opens your current source code in a buffer of NANO.<br>
+**The path is at /etc/pydirman.py**
+
+## `EDN`
+
+This stands for "edit-source-nano". It opens your current nano configuration in a buffer of NANO.<br>
+**The path is at /etc/nanorc**
+
+## `U`
+
+This stands for "usb-open". It opens the path to folder where all your external devices, e.g. USB drives are located.<br>
+**The path is at /media/your_name**
+
+## `T`
+
+This stands for "terminal-execute". It executes the command which you pass after this command.<br>
+**>t  ...args => $...args**
+
+# OTHER COMMANDS:
+
+Let's see the below example:<br>
+
+```
+[9] file_9.ext_9---------------99 bytes
+=======================================
+...
+=======================================
+```
+
+
+**&9 will return "file_9.ext_9"**<br>
+**$file_9.ext_9 will return "9"**
+
+# USING PYTHON COMMANDS:
+
+You can now manipulate the output of a string using the EOC '^'<br>
+
+Lets say:<br>
+
+-> your file file_69.ext_69 is at index 69<br>
+
+you can extract only the file by using `&69^.split(".")[0]` which will return file_69<br>
+
+---
+
