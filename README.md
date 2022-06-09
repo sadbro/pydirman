@@ -157,7 +157,7 @@ Enter your file index which you want to delete.
 
 To delete a directory : Enter `r`
 ```
-pydirman> d
+pydirman> r
 =================================================================
 [2] directory_name
 =================================================================
