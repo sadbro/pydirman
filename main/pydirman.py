@@ -21,7 +21,7 @@ from termcolor import colored, cprint
 ## GLOBAL VARS USED... PLEASE DON'T HATE ME, I AM AN IDIOT.
 
 global profile, CONFIG, CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
-TempC= "#include <stdio.h>\n#include <stdlib.h>\n\nint main(){\n\n\treturn 0;\n}"
+TempC= "#include <stdio.h>\n\nint main(){\n\n\treturn 0;\n}"
 TempCpp= "#include <iostream>\n\nusing namespace std;\nint main(){\n\n\treturn 0;\n}"
 TempHTML= '<!DOCTYPE html>\n<html lang="en">\n\t<head>\n\t\t<meta charset="UTF-8">\n\t\t<meta name="viewport" content="width=device-width,initial-scale=1.0>"\n\t\t<title></title>\n\t</head>\n\t<body>\n\n\t</body>\n</html>'
 COL, LINE = os.get_terminal_size()
@@ -153,8 +153,9 @@ def test(file, cc=""):
         filename, file_type = __file
     except:
         filename= __file[0]
+        file_type= ""
 
-    command = str(input("Enter command [exit|test|nano|clear|hex] "))
+    command = str(input("Enter command [exit|test|nano|clear|hex|debug] "))
     if command.startswith("t"):
         args= " ".join(command.split(" ")[1:])
 
@@ -202,6 +203,16 @@ def test(file, cc=""):
 
     elif command.lower() == "n":
         os.system("sudo nano {}".format(file))
+        test(file, cc)
+
+    elif command.lower() == "d":
+        os.system("sudo gdb {}.out".format(filename))
+        test(file, cc)
+
+    elif command.startswith("$"):
+
+        args = " ".join(command.split()[1:])
+        os.system(args)
         test(file, cc)
 
     elif command.lower() == "c":
@@ -321,15 +332,17 @@ def parse_cmd(ss, lsd):
         elif obj.startswith("&"):
 
             if "^" in obj:
-                ref = "'{}'{}".format(str(lsd[int(obj[1:eoc])]), obj[eoc +1:])
-
                 try:
+                    ref = "'{}'{}".format(str(lsd[int(obj[1:eoc])]), obj[eoc +1:])
                     ref = eval(ref)
                 except:
                     print("An error has occured parsing the command: `{}`".format(ref))
 
             else:
-                ref = str(lsd[int(obj[1:])])
+                try:
+                    ref = str(lsd[int(obj[1:])])
+                except:
+                    ref = obj
 
         else:
             ref = obj
@@ -431,6 +444,11 @@ def __chdir(CUR_DIR):
             print(colored("See you soon!\n", "white"))
             sys.exit(0)
 
+        elif com.lower() == "z":
+            os.system("chmod +777 .")
+            os.system("chmod +777 ./*")
+            __chdir(CUR_DIR)
+
         elif com.lower() == "console": #  PYTHON CONSOLE
             os.system("clear")
             sp.run("python3")
@@ -458,7 +476,12 @@ def __chdir(CUR_DIR):
                 CUR_DIR= "/media/{}".format(os.environ["USER"])
 
             os.system("clear")
-            os.chdir(CUR_DIR)
+            try:
+                os.chdir(CUR_DIR)
+            except:
+                print("An error has occured during accessing your media folder\n")
+                __chdir(os.getcwd())
+
             __display()
             __chdir(CUR_DIR)
 
@@ -483,12 +506,16 @@ def __chdir(CUR_DIR):
                 print("I am hungry! Feed me indices.")
                 __chdir(CUR_DIR)
             else:
+                com = parse_cmd(com, LS_DIR)
+                global profile
+                file_index = int(com.split(" ")[1])
+                file = LS_DIR[file_index]
                 try:
-                    com = parse_cmd(com, LS_DIR)
-                    global profile
-                    file_index = int(com[5:])
-                    file = LS_DIR[file_index]
-                    ext= file.split(".")[1]
+                    try:
+                        ext= file.split(".")[1]
+                    except IndexError:
+                        ext=None
+
                     CUSTOMISABLE= ["c", "cpp"]
 
                     if os.path.isfile(file):
@@ -588,8 +615,9 @@ def __chdir(CUR_DIR):
                 os.system("touch {}".format(filename))
                 file_name ,file_ext = filename.split('.')
                 TempJava= "public class "+ file_name +" {\n\n\tpublic static void main(String[] args){\n\n\n\t}\n\n}\n"
-                ns= "__"+ file_name.upper() +"_H"
+                ns= file_name.upper() +"_H"
                 TempHPP= "#ifndef {}\n#define {}\n\n\n".format(ns, ns) + "class "+ file_name +" {\n\n};\n\n#endif"
+                TempH = "#ifndef {}\n#define {}\n\n\n#endif // {}".format(ns, ns, ns)
 
                 if file_ext == 'c':
                     with open(filename, "w") as f:
@@ -606,6 +634,10 @@ def __chdir(CUR_DIR):
                 elif file_ext == 'hpp':
                     with open(filename, "w") as f:
                         f.write(TempHPP)
+
+                elif file_ext == 'h':
+                    with open(filename, "w") as f:
+                        f.write(TempH)
 
                 elif file_ext == 'html':
                     with open(filename, "w") as f:
