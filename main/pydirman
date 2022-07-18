@@ -1,4 +1,4 @@
 #!/bin/bash
 
-clear 
-python3 /etc/pydirman.py $@
+clear
+sudo python3 /etc/pydirman.py $@
