@@ -20,12 +20,13 @@ from termcolor import colored, cprint
 
 ## GLOBAL VARS USED... PLEASE DON'T HATE ME, I AM AN IDIOT.
 
-global profile, CONFIG, CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
+global profile, CMD_PATH, CONFIG, CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
 TempC= "#include <stdio.h>\n\nint main(){\n\n\treturn 0;\n}"
 TempCpp= "#include <iostream>\n\nusing namespace std;\nint main(){\n\n\treturn 0;\n}"
 TempHTML= '<!DOCTYPE html>\n<html lang="en">\n\t<head>\n\t\t<meta charset="UTF-8">\n\t\t<meta name="viewport" content="width=device-width,initial-scale=1.0>"\n\t\t<title></title>\n\t</head>\n\t<body>\n\n\t</body>\n</html>'
 COL, LINE = os.get_terminal_size()
 CONFIG= "/.pydirman.config"
+CMD_PATH= "/etc/.pydirman.commands"
 NANORC="/etc/nanorc"
 profile= ""
 
@@ -145,6 +146,40 @@ def print_profiles():
 
     print("-"*COL)
 
+def cmd(__file, __args, __profile):
+
+    """
+    this reads the available command from extensions stored in /etc/.pydirman.commands
+
+    the format for commands file is:
+
+        [<EXTENSION>] YOUR_COMMAND (in a new line)
+
+        $0 : the whole file name
+        $1 : the args passed to the executable
+        $2 : the profile used in custom builds
+        $. : the filename without the extension (e.g test is $. for test.py)
+
+    """
+
+    global CMD_PATH
+    __rfile = __file.split(".")
+    name = __rfile[0]
+    ext = __rfile[-1]
+
+    with open(CMD_PATH) as f:
+        data = f.readlines()
+
+    for line in data:
+        raw = line.strip(" ").split()
+        raw_ext = raw[0]
+        command = " ".join(raw[1:])
+
+        if (ext == raw_ext[1:-1]):
+            return command.replace("$0", __file).replace("$1", __args).replace("$2", __profile).replace("$.", name).strip()
+
+    print("\nNo command found for this file type %s " % ext)
+
 def test(file, cc=""):
 
     global COL, browser, CONFIG, profile
@@ -166,36 +201,13 @@ def test(file, cc=""):
             print("No profiles detected!")
 
         print("-"*COL)
-
-        if file_type == 'py':
-            os.system("python3 {} {}".format(file, args).rstrip())
-
-        elif file_type == 'c':
-            os.system("gcc {} {} -o {}.out && ./{}.out {}".format(file, cc, filename, filename, args).rstrip())
-
-        elif file_type == 'cpp':
-            os.system("g++ {} {} -o {}.out && ./{}.out {}".format(file, cc, filename, filename, args).rstrip())
-
-        elif file_type == 'asm':
-            os.system("sudo nasm -f elf64 {} && sudo ld -o {}.out {}.o && sudo ./{}.out".format(file, filename, filename, filename))
-
-        elif file_type == 'js':
-            os.system("node {} {}".format(file, args).rstrip())
-
-        elif file_type == 'java':
-            os.system("javac -Xlint:unchecked {} && java {} {}".format(file, filename, args).strip())
-
-        elif file_type == 'out' or file_type == 'sh':
-            try:
-                os.system("./{} {}".format(file, args).rstrip())
-            except:
-                os.system("chmod +x {}".format(file))
-
-        elif file_type == 'class':
-            os.system("java {} {}".format(filename, args).rstrip())
-
-        elif file_type == 'html':
+        if file_type == 'html':
             os.system("python3 -m http.server 8080 --directory {}".format(CUR_DIR))
+
+        else:
+            _custom = cmd(file, args, cc)
+            print("CUSTOM COMMAND: {}\n".format(_custom))
+            os.system(_custom)
 
         print()
         print("="*COL)
@@ -230,8 +242,12 @@ def test(file, cc=""):
         __display()
         __chdir(os.getcwd())
 
+    elif command.lower() == "cmd":
+        os.system("sudo nano {}".format(CMD_PATH))
+        test(file, cc)
+
     elif command.lower() == "cc":
-        os.system("sudo nano /.pydirman.config")
+        os.system("sudo nano /{}".format(CONFIG))
         print_profiles()
         profile= load(input("Enter Profile Context: "))
         test(file, profile)
