@@ -31,6 +31,7 @@ else:
    
 os.system('cp ./pydirman.py /etc/')
 os.system('cp ./reader.out /bin/')
+os.system('cp ./.pydirman.commands /etc/')
 fixer('/bin/pydirman', 777)
 fixer('/etc/pydirman.py', 777)
 fixer('/bin/reader.out', 777)
