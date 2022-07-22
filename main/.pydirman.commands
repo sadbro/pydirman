@@ -1,9 +1,0 @@
-[py] python3 $0 $1
-[c] gcc $0 $2 -o $..out && ./$..out $1
-[cpp] g++ $0 $2 -o $..out && ./$..out $1
-[asm] sudo nasm -f elf64 $0 && sudo ld -o $..out $..o && sudo ./$..out
-[js] node $0 $1
-[java] javac -Xlint:unchecked $0 && java $. $1
-[class] java $0 $1
-[out] chmod +x $0 && ./$0 $1
-[sh] chmod +x $0 && ./$0 $1
