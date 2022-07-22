@@ -28,10 +28,11 @@ if 'pydirman' in os.listdir('/bin/'):
     pass
 else:
     os.system('cp ./pydirman /bin/')
-   
+
+os.system('mkdir /etc/.pydirman')
 os.system('cp ./pydirman.py /etc/')
 os.system('cp ./reader.out /bin/')
-os.system('cp ./.pydirman.commands /etc/')
+os.system('cp ./commands.yaml /etc/.pydirman')
 fixer('/bin/pydirman', 777)
 fixer('/etc/pydirman.py', 777)
 fixer('/bin/reader.out', 777)
