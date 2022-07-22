@@ -15,6 +15,7 @@ import os
 import sys
 import readline
 import subprocess as sp
+import yaml
 from time import sleep
 from termcolor import colored, cprint
 
@@ -25,8 +26,8 @@ TempC= "#include <stdio.h>\n\nint main(){\n\n\treturn 0;\n}"
 TempCpp= "#include <iostream>\n\nusing namespace std;\nint main(){\n\n\treturn 0;\n}"
 TempHTML= '<!DOCTYPE html>\n<html lang="en">\n\t<head>\n\t\t<meta charset="UTF-8">\n\t\t<meta name="viewport" content="width=device-width,initial-scale=1.0>"\n\t\t<title></title>\n\t</head>\n\t<body>\n\n\t</body>\n</html>'
 COL, LINE = os.get_terminal_size()
-CONFIG= "/.pydirman.config"
-CMD_PATH= "/etc/.pydirman.commands"
+CONFIG= "/etc/.pydirman/config.yaml"
+CMD_PATH= "/etc/.pydirman/commands.yaml"
 NANORC="/etc/nanorc"
 profile= ""
 
@@ -44,20 +45,19 @@ def log(cmd, ctx):
 
     global CONFIG
 
-    with open(CONFIG, "a") as f:
-        f.write("[{}] {}\n".format(ctx, cmd))
+    with open(CONFIG, "a+") as f:
+        data = yaml.safe_load(f)
+        data[ctx] = cmd
+
+        yaml.dump(data, f)
 
 def load(ctx):
 
     global CONFIG
 
-    with open(CONFIG, "r") as f:
-        lines= f.readlines()
-
-    for line in lines:
-        context= line.split(" ")[0][1:-1]
-        if context == ctx:
-            return " ".join(line.split(" ")[1:]).rstrip("\n")
+    with open(CONFIG) as f:
+        data = yaml.safe_load(f)
+        return data[ctx]
 
     return ""
 
@@ -134,22 +134,19 @@ def print_profiles():
 
     global CONFIG, profile, COL
 
-    with open(CONFIG, "r") as f:
-        data= f.readlines()
+    with open(CONFIG) as f:
+        data= yaml.safe_load(f)
 
     print("-"*COL)
-    for line in data:
-        context= line.split(" ")[0]
-        profile= " ".join(line.split(" ")[1:]).rstrip("\n")
-
-        print("CONTEXT{}: `{}`".format(context, profile))
+    for key, value in data.items():
+        print("CONTEXT[{}]: `{}`".format(key, value))
 
     print("-"*COL)
 
 def cmd(__file, __args, __profile):
 
     """
-    this reads the available command from extensions stored in /etc/.pydirman.commands
+    this reads the available command from extensions stored in /etc/.pydirman/commands.yaml
 
     the format for commands file is:
 
@@ -168,20 +165,16 @@ def cmd(__file, __args, __profile):
     """
 
     global CMD_PATH
-    __rfile = __file.split(".")
-    name = __rfile[0]
-    ext = __rfile[-1]
 
     with open(CMD_PATH) as f:
-        data = f.readlines()
+        data = yaml.safe_load(f)
 
-    for line in data:
-        raw = line.strip(" ").split()
-        raw_ext = raw[0]
-        command = " ".join(raw[1:])
+    __raw = __file.split(".")
+    name = __raw[0]
+    ext = __raw[-1]
 
-        if (ext == raw_ext[1:-1]):
-            return command.replace("$0", __file).replace("$1", __args).replace("$2", __profile).replace("$.", name).strip()
+    if data[ext]:
+        return data[ext].replace("$0", __file).replace("$1", __args).replace("$2", __profile).replace("$.", name)
 
     print("\nNo command found for this file type [%s]. Add support for this type by editing the commands file %s." % (ext, CMD_PATH))
 
