@@ -160,6 +160,11 @@ def cmd(__file, __args, __profile):
         $2 : the profile used in custom builds
         $. : the filename without the extension (e.g test is $. for test.py)
 
+        [EXAMPLE]
+
+        for python it is:
+            python3 $0 $1
+
     """
 
     global CMD_PATH
@@ -178,7 +183,7 @@ def cmd(__file, __args, __profile):
         if (ext == raw_ext[1:-1]):
             return command.replace("$0", __file).replace("$1", __args).replace("$2", __profile).replace("$.", name).strip()
 
-    print("\nNo command found for this file type %s " % ext)
+    print("\nNo command found for this file type [%s]. Add support for this type by editing the commands file %s." % (ext, CMD_PATH))
 
 def test(file, cc=""):
 
@@ -206,8 +211,9 @@ def test(file, cc=""):
 
         else:
             _custom = cmd(file, args, cc)
-            print("CUSTOM COMMAND: {}\n".format(_custom))
-            os.system(_custom)
+            print("CUSTOM COMMAND: {}".format(_custom))
+            if _custom:
+                os.system(_custom)
 
         print()
         print("="*COL)
@@ -218,7 +224,10 @@ def test(file, cc=""):
         test(file, cc)
 
     elif command.lower() == "d":
-        os.system("sudo gdb {}.out".format(filename))
+        if file_type in ['c', 'cpp']:
+            os.system("sudo gdb {}.out".format(filename))
+        else:
+            print("Invalid debugger for current file.\n")
         test(file, cc)
 
     elif command.startswith("$"):
@@ -242,7 +251,7 @@ def test(file, cc=""):
         __display()
         __chdir(os.getcwd())
 
-    elif command.lower() == "cmd":
+    elif command.lower() == "edc":
         os.system("sudo nano {}".format(CMD_PATH))
         test(file, cc)
 
@@ -459,11 +468,6 @@ def __chdir(CUR_DIR):
         elif com.lower() == "e": #  EXIT COMMAND
             print(colored("See you soon!\n", "white"))
             sys.exit(0)
-
-        elif com.lower() == "z":
-            os.system("chmod +777 .")
-            os.system("chmod +777 ./*")
-            __chdir(CUR_DIR)
 
         elif com.lower() == "console": #  PYTHON CONSOLE
             os.system("clear")
@@ -694,6 +698,7 @@ def __chdir(CUR_DIR):
             try:
                 dirname_mk = com.split(" ")[1]
                 os.system("mkdir {}".format(dirname_mk))
+                os.system("chmod +777 {} {}/*".format(dirname_mk, dirname_mk))
             except KeyboardInterrupt:
                 print("Directory not created!")
 
