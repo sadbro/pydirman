@@ -1,5 +1,6 @@
 # PYDIRMAN
 
+## Watch the tutorial here: 
 [![What happened here :/](https://img.youtube.com/vi/1B1_kWp-WCY/0.jpg)](https://www.youtube.com/watch?v=1B1_kWp-WCY)
 
 
