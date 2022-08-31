@@ -5,7 +5,7 @@
 
 
 A Python script to manage your directories. \
-(Only for LINUX systems)
+(Only for DEBIAN systems)
 ## Getting Started
 ```
 cd /pydirman/main
