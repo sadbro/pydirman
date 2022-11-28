@@ -8,6 +8,7 @@ A Python script to manage your directories. \
 (Only for DEBIAN systems)
 ## Getting Started
 ```
+git clone https://github.com/sadbro/pydirman.git
 cd /pydirman/main
 sudo python setup.py
 sudo pydirman
