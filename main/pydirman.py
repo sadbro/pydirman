@@ -149,7 +149,7 @@ def print_profiles():
 def cmd(__file, __args, __profile):
 
     """
-000    this reads the available command from extensions stored in /etc/.pydirman.commands
+    this reads the available command from extensions stored in /etc/.pydirman.commands
 
     the format for commands file is:
 
