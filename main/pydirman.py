@@ -15,7 +15,7 @@ import os
 import sys
 import readline
 import subprocess as sp
-from time import sleep
+from time import sleep,time
 from termcolor import colored, cprint
 
 ## GLOBAL VARS USED... PLEASE DON'T HATE ME, I AM AN IDIOT.
@@ -213,9 +213,12 @@ def test(file, cc=""):
             _custom = cmd(file, args, cc)
             print("CUSTOM COMMAND: {}".format(_custom))
             if _custom:
+                time_initial = time()
                 os.system(_custom)
+                time_final = time()
 
         print()
+        print(f"Code has been executed successfully in {time_final - time_initial} seconds\n")
         print("="*COL)
         test(file, cc)
 
