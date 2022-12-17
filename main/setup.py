@@ -7,7 +7,7 @@ import os
 from termcolor import colored
 os.chdir('.')
 
-require = ['termcolor', 'pip']
+require = ['pip', 'termcolor']
 PATH = os.path.realpath('.')
 # GET OS VERSION
 os_details = sp.getoutput("cat /etc/[A-Za-z]*[_-][rv]e[lr]*")
@@ -40,7 +40,7 @@ if OS_VERSION == 'arch':
     # PACKAGE MENU
     for i in range(len(os_require)):
         print(colored('[{}]: {}'.format(i, os_require[i]), "yellow"))
-    req_packages = input(colored(f"\nEnter the index of the packages you want to install\ne.g. 0 1 2\n", "red", attrs=['bold']))
+    req_packages = input(colored(f"\nEnter the index of the packages you want to install (e.g. 0 1 2)\n", "red", attrs=['bold']))
 
     print("Installing {} packages".format(len(req_packages)))
     for index in req_packages.strip().split():
@@ -54,9 +54,9 @@ def fixer(cmd, ind):
     '''sets the file permission for cmd file to ind'''
     os.system('sudo chmod {} {}'.format(ind, cmd))
 
-#docs = sorted(os.listdir(PATH))
-#for doc in docs:
-#    fixer(doc, 777)
+docs = sorted(os.listdir(PATH))
+for doc in docs:
+   fixer(doc, 777)
 
 if 'pydirman' in os.listdir('/bin/'):
     pass
@@ -67,5 +67,6 @@ os.system('cp ./pydirman /bin/')
 os.system('cp ./reader.out /bin/')
 os.system('cp ./.pydirman.commands /etc/')
 fixer('/bin/pydirman', 777)
-#fixer('/etc/pydirman.py', 777)
 fixer('/bin/reader.out', 777)
+
+print(colored("INSTALLATION SUCCESSFUL", "green", attrs=['bold']))
