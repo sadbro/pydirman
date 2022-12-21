@@ -28,6 +28,7 @@ COL, LINE = os.get_terminal_size()
 CONFIG= "/.pydirman.config"
 CMD_PATH= "/etc/.pydirman.commands"
 NANORC="/etc/nanorc"
+VIMRC="~/.vimrc"
 profile= ""
 
 try:
@@ -195,7 +196,7 @@ def test(file, cc=""):
         filename= __file[0]
         file_type= ""
 
-    command = str(input("Enter command [exit|test|nano|clear|hex|debug] "))
+    command = str(input("Enter command [exit|test|nano|vim|clear|hex|debug] "))
     if command.startswith("t"):
         args= " ".join(command.split(" ")[1:])
 
@@ -224,6 +225,10 @@ def test(file, cc=""):
 
     elif command.lower() == "n":
         os.system("sudo nano {}".format(file))
+        test(file, cc)
+	
+    elif command.lower() == "v":
+        os.system("sudo vim {}".format(file))
         test(file, cc)
 
     elif command.lower() == "d":
@@ -512,8 +517,12 @@ def __chdir(CUR_DIR):
             os.system("sudo nano {} ".format(SOURCE_FILE_PATH))
             __chdir(os.getcwd())
 
-        elif com.lower() == "edn": # SOURCE CODE ACCESS
+        elif com.lower() == "edn": # nano RUN CONFIG FILE
             os.system("sudo nano {} ".format(NANORC))
+            __chdir(os.getcwd())
+	
+        elif com.lower() == "edv": # vim RUN CONFIG FILE
+            os.system("sudo vim {} ".format(VIMRC))
             __chdir(os.getcwd())
 
         elif com.lower() == "c": #  CLEAR/REFRESH COMMAND
