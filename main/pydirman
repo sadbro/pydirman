@@ -20,19 +20,20 @@ from termcolor import colored, cprint
 
 ## GLOBAL VARS USED... PLEASE DON'T HATE ME, I AM AN IDIOT.
 
-global profile, CMD_PATH, CONFIG, CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
+global profile, CMD_PATH, CONFIG, PRO_FILE, CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
 TempC= "#include <stdio.h>\n\nint main(){\n\n\treturn 0;\n}"
 TempCpp= "#include <iostream>\n\nusing namespace std;\nint main(){\n\n\treturn 0;\n}"
 TempHTML= '<!DOCTYPE html>\n<html lang="en">\n\t<head>\n\t\t<meta charset="UTF-8">\n\t\t<meta name="viewport" content="width=device-width,initial-scale=1.0>"\n\t\t<title></title>\n\t</head>\n\t<body>\n\n\t</body>\n</html>'
 COL, LINE = os.get_terminal_size()
-CONFIG= "/.pydirman.config"
+PRO_FILE= "/.pydirman.profile"
+CONFIG="/.pydirman.config"
 CMD_PATH= "/etc/.pydirman.commands"
 NANORC="/etc/nanorc"
 VIMRC="~/.vimrc"
 profile= ""
 
 try:
-    with open(CONFIG, "x") as f:
+    with open(PRO_FILE, "x") as f:
         pass
 except:
     pass
@@ -43,16 +44,16 @@ def green(text):
 
 def log(cmd, ctx):
 
-    global CONFIG
+    global PRO_FILE
 
-    with open(CONFIG, "a") as f:
+    with open(PRO_FILE, "a") as f:
         f.write("[{}] {}\n".format(ctx, cmd))
 
 def load(ctx):
 
-    global CONFIG
+    global PRO_FILE
 
-    with open(CONFIG, "r") as f:
+    with open(PRO_FILE, "r") as f:
         lines= f.readlines()
 
     for line in lines:
@@ -133,9 +134,9 @@ def __hex(fp):
 
 def print_profiles():
 
-    global CONFIG, profile, COL
+    global PRO_FILE, profile, COL
 
-    with open(CONFIG, "r") as f:
+    with open(PRO_FILE, "r") as f:
         data= f.readlines()
 
     print("-"*COL)
@@ -188,7 +189,7 @@ def cmd(__file, __args, __profile):
 
 def test(file, cc=""):
 
-    global COL, browser, CONFIG, profile
+    global COL, browser, PRO_FILE, profile
     __file = file.split(".")
     try:
         filename, file_type = __file
@@ -217,9 +218,10 @@ def test(file, cc=""):
                 time_initial = time()
                 os.system(_custom)
                 time_final = time()
+                print(f"Code has been executed successfully in {time_final - time_initial} seconds\n")
 
         print()
-        print(f"Code has been executed successfully in {time_final - time_initial} seconds\n")
+        print("Process complete")
         print("="*COL)
         test(file, cc)
 
@@ -264,7 +266,7 @@ def test(file, cc=""):
         test(file, cc)
 
     elif command.lower() == "cc":
-        os.system("sudo nano /{}".format(CONFIG))
+        os.system("sudo nano /{}".format(PRO_FILE))
         print_profiles()
         profile= load(input("Enter Profile Context: "))
         test(file, profile)
