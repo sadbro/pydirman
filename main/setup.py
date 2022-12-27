@@ -66,6 +66,7 @@ else:
     os.system('cp ./pydirman /bin/')
    
 os.system('cp ./pydirman /bin/')
+os.system('sudo cp ./.pydirman.config /')
 os.system('cp ./reader.out /bin/')
 os.system('cp ./.pydirman.commands /etc/')
 fixer('/bin/pydirman', 777)

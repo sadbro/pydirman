@@ -28,12 +28,13 @@ COL, LINE = os.get_terminal_size()
 PRO_FILE= "/.pydirman.profile"
 CONFIG="/.pydirman.config"
 CMD_PATH= "/etc/.pydirman.commands"
+TEXT_EDITOR = sp.getoutput("grep text_editor /.pydirman.config").split()[1]
 NANORC="/etc/nanorc"
 VIMRC="~/.vimrc"
 profile= ""
 
 try:
-    with open(PRO_FILE, "x") as f:
+    with open(PRO_FILE, "x") as f1, open(CONFIG, "x") as f2:
         pass
 except:
     pass
@@ -188,8 +189,7 @@ def cmd(__file, __args, __profile):
     print("\nNo command found for this file type [%s]. Add support for this type by editing the commands file %s." % (ext, CMD_PATH))
 
 def test(file, cc=""):
-
-    global COL, browser, PRO_FILE, profile
+    global COL, browser, PRO_FILE, profile, TEXT_EDITOR
     __file = file.split(".")
     try:
         filename, file_type = __file
@@ -197,7 +197,7 @@ def test(file, cc=""):
         filename= __file[0]
         file_type= ""
 
-    command = str(input("Enter command [exit|test|nano|vim|clear|hex|debug] "))
+    command = str(input("Enter command [e"+colored("x", "green")+"it|"+colored("t", "green")+"est|"+colored("e", "green")+"dit|"+colored("c", "green")+"lear|"+colored("h", "green")+"ex|"+colored("d", "green")+"ebug] "))
     if command.startswith("t"):
         args= " ".join(command.split(" ")[1:])
 
@@ -225,12 +225,8 @@ def test(file, cc=""):
         print("="*COL)
         test(file, cc)
 
-    elif command.lower() == "n":
-        os.system("sudo nano {}".format(file))
-        test(file, cc)
-	
-    elif command.lower() == "v":
-        os.system("sudo vim {}".format(file))
+    elif command.lower() == "e":
+        os.system("sudo {} {}".format(TEXT_EDITOR, file))
         test(file, cc)
 
     elif command.lower() == "d":
@@ -256,17 +252,17 @@ def test(file, cc=""):
         __hex(file)
         test(file, cc)
 
-    elif command.lower() == "e":
+    elif command.lower() == "x":        #EXIT COMMAND
         os.system("clear")
         __display()
         __chdir(os.getcwd())
 
     elif command.lower() == "edc":
-        os.system("sudo nano {}".format(CMD_PATH))
+        os.system("sudo {} {}".format(TEXT_EDITOR,CMD_PATH))
         test(file, cc)
 
     elif command.lower() == "cc":
-        os.system("sudo nano /{}".format(PRO_FILE))
+        os.system("sudo {} /{}".format(TEXT_EDITOR, PRO_FILE))
         print_profiles()
         profile= load(input("Enter Profile Context: "))
         test(file, profile)
@@ -392,7 +388,7 @@ def parse_cmd(ss, lsd):
 
 def __chdir(CUR_DIR):
 
-    global TempC, TempCpp, TempHTML, COL
+    global TempC, TempCpp, TempHTML, COL, TEXT_EDITOR
     CUR_DIR = os.getcwd()
     LS_DIR = sorted(os.listdir())
     SEARCH_DIR = []
@@ -474,8 +470,8 @@ def __chdir(CUR_DIR):
                 cprint("\nThis directory is off limits!! Are you root?? I don't think so. BACK OFF!\n".upper(), "red", attrs=['bold'])
                 sleep(2)
                 __chdir(os.getcwd())
-
-        elif com.lower() == "e": #  EXIT COMMAND
+ 
+        elif com.lower() == "e":# EXIT COMMAND
             print(colored("See you soon!\n", "white"))
             sys.exit(0)
 
@@ -516,10 +512,10 @@ def __chdir(CUR_DIR):
             __chdir(CUR_DIR)
 
         elif com.lower() == "ed": # SOURCE CODE ACCESS
-            os.system("sudo nano {} ".format(SOURCE_FILE_PATH))
+            os.system("sudo {} {} ".format(TEXT_EDITOR, SOURCE_FILE_PATH))
             __chdir(os.getcwd())
 
-        elif com.lower() == "edn": # nano RUN CONFIG FILE
+        elif com.lower() == "edn": # text editor RUN CONFIG FILE
             os.system("sudo nano {} ".format(NANORC))
             __chdir(os.getcwd())
 	
@@ -542,12 +538,15 @@ def __chdir(CUR_DIR):
             else:
                 com = parse_cmd(com, LS_DIR)
                 global profile
-                file_index = int(com.split(" ")[1])
-                file = LS_DIR[file_index]
+                try:
+                    file_index = int(com.split(" ")[1])
+                    file = LS_DIR[file_index]
+                except ValueError:
+                    file = None
                 try:
                     try:
                         ext= file.split(".")[1]
-                    except IndexError:
+                    except (IndexError, ValueError, AttributeError):
                         ext=None
 
                     CUSTOMISABLE= ["c", "cpp"]
@@ -569,9 +568,10 @@ def __chdir(CUR_DIR):
                     print("Index {} not found".format(file_index))
                     __chdir(CUR_DIR)
 
-                except ValueError:
+                except (ValueError, TypeError):
                     print("Please enter a index!!")
                     __chdir(CUR_DIR)
+
 
         elif (com.lower() == "?")or(com.lower() == "h"): #  HELP COMMAND
             print("\n[help]      = "+ colored("[?/h]", 'red') +"elp-"+ colored("[ed]", 'red') +"itsource")
