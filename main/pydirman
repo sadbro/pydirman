@@ -20,18 +20,21 @@ from termcolor import colored, cprint
 
 ## GLOBAL VARS USED... PLEASE DON'T HATE ME, I AM AN IDIOT.
 
-global profile, CMD_PATH, CONFIG, CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
+global profile, CMD_PATH, CONFIG, PRO_FILE, CUR_DIR, LS_DIR, CUR_PATH, CUR_FILE, SEARCH_DIR, SYS_DIR, TempC, TempCpp, TempHTML, COL, browser
 TempC= "#include <stdio.h>\n\nint main(){\n\n\treturn 0;\n}"
 TempCpp= "#include <iostream>\n\nusing namespace std;\nint main(){\n\n\treturn 0;\n}"
 TempHTML= '<!DOCTYPE html>\n<html lang="en">\n\t<head>\n\t\t<meta charset="UTF-8">\n\t\t<meta name="viewport" content="width=device-width,initial-scale=1.0>"\n\t\t<title></title>\n\t</head>\n\t<body>\n\n\t</body>\n</html>'
 COL, LINE = os.get_terminal_size()
-CONFIG= "/.pydirman.config"
+PRO_FILE= "/.pydirman.profile"
+CONFIG="/.pydirman.config"
 CMD_PATH= "/etc/.pydirman.commands"
+TEXT_EDITOR = sp.getoutput("grep text_editor /.pydirman.config").split()[1]
 NANORC="/etc/nanorc"
+VIMRC="~/.vimrc"
 profile= ""
 
 try:
-    with open(CONFIG, "x") as f:
+    with open(PRO_FILE, "x") as f1, open(CONFIG, "x") as f2:
         pass
 except:
     pass
@@ -42,16 +45,16 @@ def green(text):
 
 def log(cmd, ctx):
 
-    global CONFIG
+    global PRO_FILE
 
-    with open(CONFIG, "a") as f:
+    with open(PRO_FILE, "a") as f:
         f.write("[{}] {}\n".format(ctx, cmd))
 
 def load(ctx):
 
-    global CONFIG
+    global PRO_FILE
 
-    with open(CONFIG, "r") as f:
+    with open(PRO_FILE, "r") as f:
         lines= f.readlines()
 
     for line in lines:
@@ -132,9 +135,9 @@ def __hex(fp):
 
 def print_profiles():
 
-    global CONFIG, profile, COL
+    global PRO_FILE, profile, COL
 
-    with open(CONFIG, "r") as f:
+    with open(PRO_FILE, "r") as f:
         data= f.readlines()
 
     print("-"*COL)
@@ -186,8 +189,7 @@ def cmd(__file, __args, __profile):
     print("\nNo command found for this file type [%s]. Add support for this type by editing the commands file %s." % (ext, CMD_PATH))
 
 def test(file, cc=""):
-
-    global COL, browser, CONFIG, profile
+    global COL, browser, PRO_FILE, profile, TEXT_EDITOR
     __file = file.split(".")
     try:
         filename, file_type = __file
@@ -195,7 +197,7 @@ def test(file, cc=""):
         filename= __file[0]
         file_type= ""
 
-    command = str(input("Enter command [exit|test|nano|clear|hex|debug] "))
+    command = str(input("Enter command [e"+colored("x", "green")+"it|"+colored("t", "green")+"est|"+colored("e", "green")+"dit|"+colored("c", "green")+"lear|"+colored("h", "green")+"ex|"+colored("d", "green")+"ebug] "))
     if command.startswith("t"):
         args= " ".join(command.split(" ")[1:])
 
@@ -216,14 +218,15 @@ def test(file, cc=""):
                 time_initial = time()
                 os.system(_custom)
                 time_final = time()
+                print(f"Code has been executed successfully in {time_final - time_initial} seconds\n")
 
         print()
-        print(f"Code has been executed successfully in {time_final - time_initial} seconds\n")
+        print("Process complete")
         print("="*COL)
         test(file, cc)
 
-    elif command.lower() == "n":
-        os.system("sudo nano {}".format(file))
+    elif command.lower() == "e":
+        os.system("sudo {} {}".format(TEXT_EDITOR, file))
         test(file, cc)
 
     elif command.lower() == "d":
@@ -249,17 +252,17 @@ def test(file, cc=""):
         __hex(file)
         test(file, cc)
 
-    elif command.lower() == "e":
+    elif command.lower() == "x":        #EXIT COMMAND
         os.system("clear")
         __display()
         __chdir(os.getcwd())
 
     elif command.lower() == "edc":
-        os.system("sudo nano {}".format(CMD_PATH))
+        os.system("sudo {} {}".format(TEXT_EDITOR,CMD_PATH))
         test(file, cc)
 
     elif command.lower() == "cc":
-        os.system("sudo nano /{}".format(CONFIG))
+        os.system("sudo {} /{}".format(TEXT_EDITOR, PRO_FILE))
         print_profiles()
         profile= load(input("Enter Profile Context: "))
         test(file, profile)
@@ -385,7 +388,7 @@ def parse_cmd(ss, lsd):
 
 def __chdir(CUR_DIR):
 
-    global TempC, TempCpp, TempHTML, COL
+    global TempC, TempCpp, TempHTML, COL, TEXT_EDITOR
     CUR_DIR = os.getcwd()
     LS_DIR = sorted(os.listdir())
     SEARCH_DIR = []
@@ -467,8 +470,8 @@ def __chdir(CUR_DIR):
                 cprint("\nThis directory is off limits!! Are you root?? I don't think so. BACK OFF!\n".upper(), "red", attrs=['bold'])
                 sleep(2)
                 __chdir(os.getcwd())
-
-        elif com.lower() == "e": #  EXIT COMMAND
+ 
+        elif com.lower() == "e":# EXIT COMMAND
             print(colored("See you soon!\n", "white"))
             sys.exit(0)
 
@@ -509,11 +512,15 @@ def __chdir(CUR_DIR):
             __chdir(CUR_DIR)
 
         elif com.lower() == "ed": # SOURCE CODE ACCESS
-            os.system("sudo nano {} ".format(SOURCE_FILE_PATH))
+            os.system("sudo {} {} ".format(TEXT_EDITOR, SOURCE_FILE_PATH))
             __chdir(os.getcwd())
 
-        elif com.lower() == "edn": # SOURCE CODE ACCESS
+        elif com.lower() == "edn": # text editor RUN CONFIG FILE
             os.system("sudo nano {} ".format(NANORC))
+            __chdir(os.getcwd())
+	
+        elif com.lower() == "edv": # vim RUN CONFIG FILE
+            os.system("sudo vim {} ".format(VIMRC))
             __chdir(os.getcwd())
 
         elif com.lower() == "c": #  CLEAR/REFRESH COMMAND
@@ -531,12 +538,15 @@ def __chdir(CUR_DIR):
             else:
                 com = parse_cmd(com, LS_DIR)
                 global profile
-                file_index = int(com.split(" ")[1])
-                file = LS_DIR[file_index]
+                try:
+                    file_index = int(com.split(" ")[1])
+                    file = LS_DIR[file_index]
+                except ValueError:
+                    file = None
                 try:
                     try:
                         ext= file.split(".")[1]
-                    except IndexError:
+                    except (IndexError, ValueError, AttributeError):
                         ext=None
 
                     CUSTOMISABLE= ["c", "cpp"]
@@ -558,9 +568,10 @@ def __chdir(CUR_DIR):
                     print("Index {} not found".format(file_index))
                     __chdir(CUR_DIR)
 
-                except ValueError:
+                except (ValueError, TypeError):
                     print("Please enter a index!!")
                     __chdir(CUR_DIR)
+
 
         elif (com.lower() == "?")or(com.lower() == "h"): #  HELP COMMAND
             print("\n[help]      = "+ colored("[?/h]", 'red') +"elp-"+ colored("[ed]", 'red') +"itsource")

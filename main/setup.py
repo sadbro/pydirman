@@ -4,7 +4,6 @@ import subprocess as sp
 from subprocess import getoutput
 import sys
 import os
-from termcolor import colored
 os.chdir('.')
 
 require = ['pip', 'termcolor']
@@ -29,6 +28,9 @@ for package in require:
             os.system('sudo pacman -S python-{} --noconfirm'.format(package))
         elif OS_VERSION == 'debian':
             os.system('sudo apt install python3-{}'.format(package))
+
+# IMPORTING termcolor AFTER INSTALLATION
+from termcolor import colored
 
 # CHECK IF THE USER HAS THE OS_REQUIRE PACKAGES ALREADY INSTALLED ON THEIR SYSTEM
 # Working for ARCH ONLY, 
@@ -64,6 +66,7 @@ else:
     os.system('cp ./pydirman /bin/')
    
 os.system('cp ./pydirman /bin/')
+os.system('sudo cp ./.pydirman.config /')
 os.system('cp ./reader.out /bin/')
 os.system('cp ./.pydirman.commands /etc/')
 fixer('/bin/pydirman', 777)
