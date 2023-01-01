@@ -5,13 +5,13 @@
 
 
 A Python script to manage your directories. \
-(Only for DEBIAN systems)
+(Tested on Debian and Arch)
 ## Getting Started
 ```
 git clone https://github.com/sadbro/pydirman.git
 cd /pydirman/main
 sudo python3 setup.py
-sudo pydirman
+pydirman
 ```
 
 ## Contact Us
@@ -306,8 +306,8 @@ As it suggests, It clears and refreshes the screen.
 It exits from the handle and goes to the main screen.
 * **HEX :**
 It displays hexadecimal format of the contents of the handled file.
-* **NANO :**
-It opens the nano editor and enables you the edit the file.
+* **EDIT :**
+It opens the current file in the text editor(configured in /.pydirman.config) and enables you the edit the file.
 
 ### Testing Commands
 
@@ -330,7 +330,12 @@ This stands for "edit-source". It opens your current source code in a buffer of 
 
 ## `EDN`
 
-This stands for "edit-source-nano". It opens your current nano configuration in a buffer of NANO.<br>
+This stands for "edit-source-nano". It opens your current nano run configuration in a buffer of NANO.<br>
+**The path is at /etc/nanorc**
+
+## `EDV`
+
+This stands for "edit-source-vim". It opens your current vim run configuration file in a buffer of VIM.<br>
 **The path is at /etc/nanorc**
 
 ## `U`
@@ -370,3 +375,4 @@ you can extract only the file by using `&69^.split(".")[0]` which will return fi
 
 ---
 
+-
