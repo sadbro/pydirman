@@ -215,11 +215,14 @@ def test(file, cc=""):
             _custom = cmd(file, args, cc)
             print("CUSTOM COMMAND: {}".format(_custom))
             if _custom:
-                time_initial = time()
-                os.system(_custom)
-                time_final = time()
-                print(f"Code has been executed successfully in {time_final - time_initial} seconds\n")
-
+                try:
+                    time_initial = time()
+                    sp.Popen(_custom.split())
+                    time_final = time()
+                    print(f"Code has been executed successfully in {time_final - time_initial} seconds\n")
+                except FileNotFoundError:
+                    print(colored(f'"{_custom.split()[0]}" command not found, install the correct packages to run "{_custom.split()[0]}"', 'red'))
+                
         print()
         print("Process complete")
         print("="*COL)
