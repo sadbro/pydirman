@@ -183,7 +183,7 @@ def cmd(__file, __args, __profile):
         raw_ext = raw[0]
         command = " ".join(raw[1:])
 
-        if (ext == raw_ext[1:-1]):
+        if (ext.startswith(raw_ext[1:-1])):             # used .startswith() to ensure compatibility with .pyw and .pyc
             return command.replace("$0", __file).replace("$1", __args).replace("$2", __profile).replace("$.", name).strip()
 
     print("\nNo command found for this file type [%s]. Add support for this type by editing the commands file %s." % (ext, CMD_PATH))
