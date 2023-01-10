@@ -42,7 +42,7 @@ if OS_VERSION == 'arch':
     # PACKAGE MENU
     for i in range(len(os_require)):
         print(colored('[{}]: {}'.format(i, os_require[i]), "yellow"))
-    req_packages = input(colored(f"\nEnter the index of the packages you want to install (e.g. 0 1 2)\n", "red", attrs=['bold']))
+    req_packages = input(colored(f"\n[OPTIONAL] Enter the index of the packages you want to install (e.g. 0 1 2)\n", "red", attrs=['bold']))
 
     print("Installing {} packages".format(len(req_packages)))
     for index in req_packages.strip().split():

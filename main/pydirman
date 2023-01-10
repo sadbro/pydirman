@@ -172,8 +172,8 @@ def cmd(__file, __args, __profile):
 
     global CMD_PATH
     __rfile = __file.split(".")
-    name = __rfile[0]
-    ext = __rfile[-1]
+    name = __rfile[0]           # name of the file
+    ext = __rfile[-1]           # extension of the file
 
     with open(CMD_PATH) as f:
         data = f.readlines()
@@ -183,7 +183,7 @@ def cmd(__file, __args, __profile):
         raw_ext = raw[0]
         command = " ".join(raw[1:])
 
-        if (ext == raw_ext[1:-1]):
+        if (ext == raw_ext[1:-1]):             
             return command.replace("$0", __file).replace("$1", __args).replace("$2", __profile).replace("$.", name).strip()
 
     print("\nNo command found for this file type [%s]. Add support for this type by editing the commands file %s." % (ext, CMD_PATH))
@@ -215,23 +215,28 @@ def test(file, cc=""):
             _custom = cmd(file, args, cc)
             print("CUSTOM COMMAND: {}".format(_custom))
             if _custom:
-                time_initial = time()
-                os.system(_custom)
-                time_final = time()
-                print(f"Code has been executed successfully in {time_final - time_initial} seconds\n")
-
+                try:
+                    time_initial = time()
+                    sp.Popen(_custom.split())
+                    time_final = time()
+                    print(f"Code has been executed successfully in {time_final - time_initial} seconds\n")
+                except FileNotFoundError:
+                    print(colored(f'"{_custom.split()[0]}" command not found, install the correct packages to run "{_custom.split()[0]}"', 'red'))
+                
         print()
         print("Process complete")
         print("="*COL)
         test(file, cc)
 
     elif command.lower() == "e":
-        os.system("sudo {} {}".format(TEXT_EDITOR, file))
+        os.system("{} {}".format(TEXT_EDITOR, file))
         test(file, cc)
 
     elif command.lower() == "d":
         if file_type in ['c', 'cpp']:
-            os.system("sudo gdb {}.out".format(filename))
+            os.system("gdb {}.out".format(filename))
+        elif file_type == 'py':
+            os.system("python3 -m pdb {}.py".format(filename))
         else:
             print("Invalid debugger for current file.\n")
         test(file, cc)
@@ -258,11 +263,11 @@ def test(file, cc=""):
         __chdir(os.getcwd())
 
     elif command.lower() == "edc":
-        os.system("sudo {} {}".format(TEXT_EDITOR,CMD_PATH))
+        os.system("{} {}".format(TEXT_EDITOR,CMD_PATH))
         test(file, cc)
 
     elif command.lower() == "cc":
-        os.system("sudo {} /{}".format(TEXT_EDITOR, PRO_FILE))
+        os.system("{} /{}".format(TEXT_EDITOR, PRO_FILE))
         print_profiles()
         profile= load(input("Enter Profile Context: "))
         test(file, profile)
@@ -516,11 +521,11 @@ def __chdir(CUR_DIR):
             __chdir(os.getcwd())
 
         elif com.lower() == "edn": # text editor RUN CONFIG FILE
-            os.system("sudo nano {} ".format(NANORC))
+            os.system("nano {} ".format(NANORC))
             __chdir(os.getcwd())
 	
         elif com.lower() == "edv": # vim RUN CONFIG FILE
-            os.system("sudo vim {} ".format(VIMRC))
+            os.system("vim {} ".format(VIMRC))
             __chdir(os.getcwd())
 
         elif com.lower() == "c": #  CLEAR/REFRESH COMMAND
@@ -676,8 +681,6 @@ def __chdir(CUR_DIR):
                 elif file_ext == 'html':
                     with open(filename, "w") as f:
                         f.write(TempHTML)
-
-                os.system("sudo chmod 777 {}".format(filename))
 
             except:
                 print("File not created")
