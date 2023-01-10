@@ -3,7 +3,7 @@
 import os
 from termcolor import colored
 
-os.system("sudo rm /bin/pydirman /bin/reader.out /etc/.pydirman.commands /.pydirman.config")
+os.system("sudo rm /bin/pydirman /bin/reader.out /etc/.pydirman.commands")
 
 while True:
 	try:
@@ -11,6 +11,8 @@ while True:
 	except AttributeError:
 		print("Please type 'yes' or 'no'\n")
 	else:
-		break
-
-		
+		if ans == 'yes':
+			os.system("sudo rm /.pydirman.config /.pydirman.profile")
+			break
+		elif ans == 'no':
+			break
