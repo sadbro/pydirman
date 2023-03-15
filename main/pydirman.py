@@ -291,7 +291,7 @@ def __display():
     LS_DIR = sorted(os.listdir())
     CUR_PATH = os.path.abspath(CUR_DIR)
 
-    print(colored("\nPYTHON DIRECTORY MANAGEMENT\n", "red", attrs=['underline', 'bold']))
+    print(colored("\nPYTHON DIRECTORY MANAGER\n", "red", attrs=['underline', 'bold']))
     gi= green(" | ")
     print(colored("Directory", "yellow") + gi + colored("File", "white") + gi + colored("Error", "red"))
     print(green("="*COL))
