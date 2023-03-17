@@ -12,6 +12,7 @@
 
 
 import os
+from ast import literal_eval
 import sys
 import readline
 import subprocess as sp
@@ -195,7 +196,7 @@ def test(file, cc=""):
         filename= __file[0]
         file_type= ""
 
-    command = str(input("Enter command [exit|test|nano|clear|hex|debug] "))
+    command = str(input(green("Enter command [exit|test|nano|clear|hex|debug] ")))
     if command.startswith("t"):
         args= " ".join(command.split(" ")[1:])
 
@@ -207,11 +208,13 @@ def test(file, cc=""):
 
         print("-"*COL)
         if file_type == 'html':
-            os.system("python3 -m http.server 8080 --directory {}".format(CUR_DIR))
+            os.system("xdg-open %s" % file)
+            #os.system("python3 -m http.server 8080 --directory {}".format(CUR_DIR))
 
         else:
             _custom = cmd(file, args, cc)
             print("CUSTOM COMMAND: {}".format(_custom))
+            print("-"*COL)
             if _custom:
                 os.system(_custom)
 
@@ -220,7 +223,7 @@ def test(file, cc=""):
         test(file, cc)
 
     elif command.lower() == "n":
-        os.system("sudo nano {}".format(file))
+        os.system("nano {}".format(file))
         test(file, cc)
 
     elif command.lower() == "d":
@@ -252,14 +255,17 @@ def test(file, cc=""):
         __chdir(os.getcwd())
 
     elif command.lower() == "edc":
-        os.system("sudo nano {}".format(CMD_PATH))
+        os.system("nano {}".format(CMD_PATH))
         test(file, cc)
 
     elif command.lower() == "cc":
-        os.system("sudo nano /{}".format(CONFIG))
-        print_profiles()
-        profile= load(input("Enter Profile Context: "))
-        test(file, profile)
+        if file_type in ["c", "cpp"]:
+            os.system("nano /{}".format(CONFIG))
+            print_profiles()
+            profile= load(input("Enter Profile Context: "))
+            test(file, profile)
+        else:
+            test(file, cc)
 
     elif command.lower() == "gc":
         print("-"*COL)
@@ -280,6 +286,50 @@ def test(file, cc=""):
     else:
         print("please enter a valid command")
         test(file, cc)
+
+def check_config():
+
+    global CUR_DIR
+
+    project_def_name = CUR_DIR.split("/")[-1]
+    __CFG = "./.pydirman"
+    tmp = {}
+
+    def conditional_input(prompt: str, default: str):
+
+        tmp = input(prompt)
+        return tmp if tmp != "" else default
+
+    if os.path.exists(__CFG):
+        with open(__CFG, "r") as f:
+            tmp = literal_eval(f.read())
+
+    else:
+        print("\n CONFIG FILE `.pydirman` does not exist \n")
+        print("creating one...")
+
+        tmp["name"] = conditional_input("Enter your project name ({}): ".format(project_def_name), project_def_name)
+        tmp["version"] = conditional_input("Enter your project version (1.0.0): ", "1.0.0")
+        tmp["desc"] = conditional_input("Enter your project description (""): ", "")
+        tmp["author"] = conditional_input("Enter your project author (""): ", "")
+        tmp["email"] = conditional_input("Enter your project email (""): ", "")
+        tmp["start"] = "echo 'No tests implemented yet !!'"
+
+        with open(__CFG, "w") as f:
+            f.write(str(tmp))
+
+        print("created `.pydirman`. Please edit said file to enable auto-build")
+
+    return tmp
+
+def parse_cfg():
+
+    # TODO: implement custom parsing for configuration files
+
+    cfg = check_config()
+
+    command = cfg["start"]
+    return sp.run(command.split())
 
 def __display():
 
@@ -312,8 +362,9 @@ def __display():
             print(gin + colored("{}".format(str(FI_FO)), "white") + colored("-"*GAP +"{}".format(file_size), "blue"))
 
         elif os.path.isdir(FI_FO):
+            tmp = len(os.listdir(FI_FO))
             dc += 1
-            print(gin + colored("{}/".format(str(FI_FO)), "yellow"))
+            print(gin + colored("{}/({})".format(str(FI_FO), tmp), "yellow"))
 
         else:
             print(gin + colored("{}".format(str(FI_FO)), "red"))
@@ -475,6 +526,14 @@ def __chdir(CUR_DIR):
             __display()
             __chdir(CUR_DIR)
 
+        elif com.lower() == "b":
+            parse_cfg()
+            __chdir(CUR_DIR)
+
+        elif com.lower() == "edc":
+            os.system("sudo nano {}".format(CMD_PATH))
+            __chdir(CUR_DIR)
+
         elif com.lower() == "o": #  OPEN-IN-GUI COMMAND
 
             edited = 0
@@ -506,11 +565,11 @@ def __chdir(CUR_DIR):
             __chdir(CUR_DIR)
 
         elif com.lower() == "ed": # SOURCE CODE ACCESS
-            os.system("sudo nano {} ".format(SOURCE_FILE_PATH))
+            os.system("nano {} ".format(SOURCE_FILE_PATH))
             __chdir(os.getcwd())
 
         elif com.lower() == "edn": # SOURCE CODE ACCESS
-            os.system("sudo nano {} ".format(NANORC))
+            os.system("nano {} ".format(NANORC))
             __chdir(os.getcwd())
 
         elif com.lower() == "c": #  CLEAR/REFRESH COMMAND
@@ -580,8 +639,9 @@ def __chdir(CUR_DIR):
                 __chdir(CUR_DIR)
 
         elif com.startswith("s "): #  SEARCH COMMAND
-            args= com.split()
-            search = args[1]
+            args=com.split()
+            #print(args)
+            search=args[1]
             try:
                 con= args[2]
             except:
@@ -719,7 +779,7 @@ def __chdir(CUR_DIR):
                 dirname_rm = str(input("Enter directory name: ")).strip()
                 if dirname_rm in SYS_DIR:
                     print("You just tried to delete a system folder!!")
-                    __chdir(os.getcwd())
+                    exit()
                 os.system("rmdir {}".format(dirname_rm))
             except KeyboardInterrupt:
                 print("Directory not deleted")
