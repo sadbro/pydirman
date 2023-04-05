@@ -9,7 +9,7 @@ A Python script to manage your directories. \
 ## Getting Started
 ```
 git clone https://github.com/sadbro/pydirman.git
-cd /pydirman/main
+cd ./pydirman/main
 sudo python3 setup.py
 sudo pydirman
 ```
