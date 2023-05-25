@@ -28,7 +28,11 @@ COL, LINE = os.get_terminal_size()
 PRO_FILE= "/.pydirman.profile"
 CONFIG="/.pydirman.config"
 CMD_PATH= "/etc/.pydirman.commands"
-TEXT_EDITOR = sp.getoutput("grep text_editor /.pydirman.config").split()[1]
+try:
+    TEXT_EDITOR = sp.getoutput("grep text_editor /.pydirman.config").split()[1]
+    FILE_MANAGER = sp.getoutput("grep file_manager /.pydirman.config").split()[1]
+except IndexError:
+    pass
 NANORC="/etc/nanorc"
 VIMRC="~/.vimrc"
 profile= ""
@@ -497,7 +501,10 @@ def __chdir(CUR_DIR):
                     edited += 1
 
             print("[PATH]: {}".format(path))
-            os.system("nautilus {}".format(path))
+            try:
+                os.system("{} {}".format(FILE_MANAGER, path))
+            except:
+                print(colored("Set correct option for [file_manager] in ./pydirman.config", "red"))
             __chdir(CUR_DIR)
 
         elif com.lower() == "u": #  USB COMMAND
@@ -517,7 +524,10 @@ def __chdir(CUR_DIR):
             __chdir(CUR_DIR)
 
         elif com.lower() == "ed": # SOURCE CODE ACCESS
-            os.system("sudo {} {} ".format(TEXT_EDITOR, SOURCE_FILE_PATH))
+            try:
+                os.system("sudo {} {} ".format(TEXT_EDITOR, SOURCE_FILE_PATH))
+            except NameError:
+                print(colored("Please configure a text_editor in /.pydirman.config", "red"))
             __chdir(os.getcwd())
 
         elif com.lower() == "edn": # text editor RUN CONFIG FILE
