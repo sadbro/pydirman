@@ -4,10 +4,9 @@ import subprocess as sp
 from subprocess import getoutput
 import sys
 import os
-from termcolor import colored
 os.chdir('.')
 
-require = ['termcolor', 'pip']
+require = ['pip', 'termcolor']
 PATH = os.path.realpath('.')
 # GET OS VERSION
 os_details = sp.getoutput("cat /etc/[A-Za-z]*[_-][rv]e[lr]*")
@@ -20,16 +19,18 @@ elif 'debian' in os_details.lower():
 else:
     print(colored("Unsupported GNU/Linux Distro", "red", attrs=['underlined', 'bold']))
     sys.exit(-1)
-#docs = sorted(os.listdir(PATH))
 
 for package in require:
     if package in sys.modules:
         pass
     else:
         if OS_VERSION == 'arch':
-            os.system('sudo pacman -S python3-{} --noconfirm'.format(package))
+            os.system('sudo pacman -S python-{} --noconfirm'.format(package))
         elif OS_VERSION == 'debian':
             os.system('sudo apt install python3-{}'.format(package))
+
+# IMPORTING termcolor AFTER INSTALLATION
+from termcolor import colored
 
 # CHECK IF THE USER HAS THE OS_REQUIRE PACKAGES ALREADY INSTALLED ON THEIR SYSTEM
 # Working for ARCH ONLY, 
@@ -39,13 +40,13 @@ if OS_VERSION == 'arch':
         result = sp.getoutput('pacman -Qe {}'.format(package))
 
     # PACKAGE MENU
-    for i in len(os_require):
+    for i in range(len(os_require)):
         print(colored('[{}]: {}'.format(i, os_require[i]), "yellow"))
-    req_packages = input(colored(f"\nEnter the index of the packages you want to install\ne.g. 0 1 2\n", "red", attrs=['bold']))
+    req_packages = input(colored(f"\n[OPTIONAL] Enter the index of the packages you want to install (e.g. 0 1 2)\n", "red", attrs=['bold']))
 
     print("Installing {} packages".format(len(req_packages)))
     for index in req_packages.strip().split():
-        os.system('sudo pacman -S {} --noconfirm'.format(os_require[index]))
+        os.system('sudo pacman -S {} --noconfirm'.format(os_require[int(index)]))
 
 elif OS_VERSION == 'debian':
     for os_package in os_require:
@@ -55,8 +56,9 @@ def fixer(cmd, ind):
     '''sets the file permission for cmd file to ind'''
     os.system('sudo chmod {} {}'.format(ind, cmd))
 
-#for doc in docs:
-#    fixer(doc, 777)
+docs = sorted(os.listdir(PATH))
+for doc in docs:
+   fixer(doc, 777)
 
 if 'pydirman' in os.listdir('/bin/'):
     pass
@@ -64,8 +66,10 @@ else:
     os.system('cp ./pydirman /bin/')
    
 os.system('cp ./pydirman /bin/')
+os.system('sudo cp ./.pydirman.config /')
 os.system('cp ./reader.out /bin/')
 os.system('cp ./.pydirman.commands /etc/')
 fixer('/bin/pydirman', 777)
-#fixer('/etc/pydirman.py', 777)
 fixer('/bin/reader.out', 777)
+
+print(colored("INSTALLATION SUCCESSFUL", "green", attrs=['bold']))
